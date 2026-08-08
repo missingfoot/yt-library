@@ -1,3 +1,7 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
@@ -12,6 +16,23 @@ interface SidebarProps {
   onManageTaxonomy: () => void;
 }
 
+function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+  return (
+    <div className="relative">
+      <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none" />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded border border-[var(--border)] bg-[var(--surface)] pl-7 pr-2 py-1
+                   text-[11px] text-[var(--text)] placeholder:text-[var(--text-faint)]
+                   focus:outline-none focus:border-[var(--accent-line)]"
+      />
+    </div>
+  );
+}
+
 export function Sidebar({
   categoryChips,
   selectedCategories,
@@ -23,13 +44,29 @@ export function Sidebar({
   onToggleTagMode,
   onManageTaxonomy,
 }: SidebarProps) {
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState("");
+
+  const filteredCategoryChips = useMemo(() => {
+    const q = categoryFilter.trim().toLowerCase();
+    if (!q) return categoryChips;
+    return categoryChips.filter((c) => c.label.toLowerCase().includes(q));
+  }, [categoryChips, categoryFilter]);
+
+  const filteredTagChips = useMemo(() => {
+    const q = tagFilter.trim().toLowerCase();
+    if (!q) return tagChips;
+    return tagChips.filter((t) => t.label.toLowerCase().includes(q));
+  }, [tagChips, tagFilter]);
+
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
       <h1 className="font-serif text-2xl font-semibold">Channel Library</h1>
 
       <div className="flex flex-col gap-2">
         <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
-        <FilterChips items={categoryChips} selected={selectedCategories} onToggle={onToggleCategory} />
+        <ChipFilterInput value={categoryFilter} onChange={setCategoryFilter} placeholder="Filter categories..." />
+        <FilterChips items={filteredCategoryChips} selected={selectedCategories} onToggle={onToggleCategory} />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -52,7 +89,8 @@ export function Sidebar({
             </button>
           </div>
         </div>
-        <FilterChips items={tagChips} selected={selectedTags} onToggle={onToggleTag} />
+        <ChipFilterInput value={tagFilter} onChange={setTagFilter} placeholder="Filter tags..." />
+        <FilterChips items={filteredTagChips} selected={selectedTags} onToggle={onToggleTag} />
       </div>
     </div>
   );
