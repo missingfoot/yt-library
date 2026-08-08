@@ -28,17 +28,19 @@ export function ChannelRow({ channel, isSelected, onSelect }: ChannelRowProps) {
       <span className={`font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
         {channel.title}
       </span>
-      <span className="text-xs text-[var(--text-dim)] shrink-0 w-44 truncate">{categoryLabel}</span>
-      <span className="flex flex-wrap gap-1.5 flex-1 min-w-0">
-        {channel.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px] text-[var(--text-dim)] shrink-0"
-          >
-            {tag}
-          </span>
-        ))}
-      </span>
+      <div className="flex items-center gap-6 ml-auto shrink-0">
+        <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 truncate text-left">{categoryLabel}</span>
+        <span className="flex flex-wrap gap-1.5 w-64 shrink-0 text-left">
+          {channel.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px] text-[var(--text-dim)] shrink-0"
+            >
+              {tag}
+            </span>
+          ))}
+        </span>
+      </div>
       <a
         href={channel.url}
         target="_blank"
