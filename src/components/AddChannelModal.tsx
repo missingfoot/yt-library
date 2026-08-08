@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 
 interface CategoryOption {
   id: string;
@@ -64,7 +65,9 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
           {selectedTags.map((t) => (
             <span key={t} className="flex items-center gap-1 rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px]">
               {t}
-              <button onClick={() => setSelectedTags((prev) => prev.filter((x) => x !== t))}>&times;</button>
+              <button onClick={() => setSelectedTags((prev) => prev.filter((x) => x !== t))} className="flex items-center">
+                <X size={11} strokeWidth={2} />
+              </button>
             </span>
           ))}
         </div>
