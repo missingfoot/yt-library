@@ -39,12 +39,6 @@ export default function Home() {
     }));
   }, [data]);
 
-  const categoryCount = useMemo(
-    () => new Set(channels.map((c) => c.category).filter(Boolean)).size,
-    [channels]
-  );
-  const uncategorizedCount = channels.filter((c) => !c.category).length;
-
   const categoryChips: ChipItem[] = useMemo(() => {
     const counts = new Map<string, number>();
     for (const c of channels) {
@@ -197,9 +191,6 @@ export default function Home() {
     <div className="h-screen flex overflow-hidden">
       <aside className="flex-1 min-w-0 border-r border-[var(--border-soft)] h-full">
         <Sidebar
-          total={channels.length}
-          categoryCount={categoryCount}
-          uncategorizedCount={uncategorizedCount}
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
           onToggleCategory={toggleCategory}
