@@ -79,7 +79,7 @@ export function Sidebar({
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
           <button
             onClick={onManageCategories}
-            className="text-[10.5px] font-mono text-[var(--text-dim)] uppercase underline underline-offset-2 hover:text-[var(--text)]"
+            className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
           >
             manage cats
           </button>
@@ -102,7 +102,7 @@ export function Sidebar({
             )}
             <button
               onClick={onManageTags}
-              className="text-[10.5px] font-mono text-[var(--text-dim)] uppercase underline underline-offset-2 hover:text-[var(--text)]"
+              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
             >
               manage tags
             </button>
