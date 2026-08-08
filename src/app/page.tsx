@@ -1,14 +1,22 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { db } from "@/lib/db";
 import { filterChannels, type ChannelView } from "@/lib/filterChannels";
+import { catColor } from "@/lib/categoryColors";
 import { StatsBar } from "@/components/StatsBar";
+import { SearchBar } from "@/components/SearchBar";
+import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
     channels: { category: {}, tags: {} },
   });
+
+  const [search, setSearch] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [tagMode, setTagMode] = useState<"and" | "or">("and");
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -27,7 +35,54 @@ export default function Home() {
   );
   const uncategorizedCount = channels.filter((c) => !c.category).length;
 
-  const visible = useMemo(() => filterChannels(channels, { sort: "name" }), [channels]);
+  const categoryChips: ChipItem[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const c of channels) {
+      const key = c.category ?? "Uncategorized";
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, count]) => ({ key, label: key, count, color: catColor(key === "Uncategorized" ? undefined : key) }));
+  }, [channels]);
+
+  const tagChips: ChipItem[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const c of channels) {
+      for (const t of c.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, count]) => ({ key, label: key, count }));
+  }, [channels]);
+
+  function toggleCategory(key: string) {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  function toggleTag(key: string) {
+    setSelectedTags((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  const visible = useMemo(
+    () =>
+      filterChannels(channels, {
+        search,
+        categories: selectedCategories,
+        tags: selectedTags,
+        tagMode,
+        sort: "name",
+      }),
+    [channels, search, selectedCategories, selectedTags, tagMode]
+  );
 
   if (isLoading) return <div className="p-10 text-[var(--text-dim)]">Loading...</div>;
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
@@ -41,8 +96,25 @@ export default function Home() {
         </p>
         <StatsBar total={channels.length} categoryCount={categoryCount} uncategorizedCount={uncategorizedCount} />
       </div>
+
+      <div className="sticky top-0 z-20 bg-[var(--bg)]/90 backdrop-blur py-4 border-b border-[var(--border-soft)] flex flex-col gap-4">
+        <SearchBar value={search} onChange={setSearch} />
+        <FilterChips items={categoryChips} selected={selectedCategories} onToggle={toggleCategory} />
+        <div className="flex items-center gap-3">
+          <FilterChips items={tagChips} selected={selectedTags} onToggle={toggleTag} />
+          {selectedTags.size > 1 && (
+            <button
+              onClick={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
+              className="text-xs font-mono text-[var(--accent)] uppercase shrink-0"
+            >
+              match: {tagMode}
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="py-6 text-[var(--text-dim)]">
-        {visible.length} channel{visible.length === 1 ? "" : "s"} (filters land in Tasks 7-9)
+        {visible.length} channel{visible.length === 1 ? "" : "s"} (cards land in Task 8)
       </div>
     </main>
   );
