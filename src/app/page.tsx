@@ -8,16 +8,21 @@ import { StatsBar } from "@/components/StatsBar";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 import { ChannelCard } from "@/components/ChannelCard";
+import { EditChannelPanel } from "@/components/EditChannelPanel";
+import { id } from "@instantdb/react";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
     channels: { category: {}, tags: {} },
+    categories: {},
+    tags: {},
   });
 
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -85,6 +90,47 @@ export default function Home() {
     [channels, search, selectedCategories, selectedTags, tagMode]
   );
 
+  function handleDelete(channelId: string) {
+    if (!confirm("Delete this channel?")) return;
+    db.transact(db.tx.channels[channelId].delete());
+  }
+
+  async function handleSaveEdit(
+    channelId: string,
+    updates: { title: string; url: string; category: string | undefined; tags: string[] }
+  ) {
+    const txSteps = [];
+    let step = db.tx.channels[channelId].update({ title: updates.title, url: updates.url });
+
+    if (updates.category) {
+      const existing = data?.categories.find((c) => c.name === updates.category);
+      const categoryId = existing?.id ?? id();
+      if (!existing) txSteps.push(db.tx.categories[categoryId].update({ name: updates.category, color: "" }));
+      step = step.link({ category: categoryId });
+    } else {
+      const channelBefore = data?.channels.find((c) => c.id === channelId);
+      const oldCategoryId = channelBefore?.category?.id;
+      if (oldCategoryId) step = step.unlink({ category: oldCategoryId });
+    }
+
+    const tagIds: string[] = [];
+    for (const tagName of updates.tags) {
+      const existing = data?.tags.find((t) => t.name === tagName);
+      const tagId = existing?.id ?? id();
+      if (!existing) txSteps.push(db.tx.tags[tagId].update({ name: tagName }));
+      tagIds.push(tagId);
+    }
+    const channelBefore = data?.channels.find((c) => c.id === channelId);
+    const oldTagIds = (channelBefore?.tags ?? []).map((t) => t.id);
+    const removedTagIds = oldTagIds.filter((tid) => !tagIds.includes(tid));
+    if (removedTagIds.length > 0) step = step.unlink({ tags: removedTagIds });
+    if (tagIds.length > 0) step = step.link({ tags: tagIds });
+
+    txSteps.push(step);
+    await db.transact(txSteps);
+    setEditingId(null);
+  }
+
   if (isLoading) return <div className="p-10 text-[var(--text-dim)]">Loading...</div>;
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
@@ -119,14 +165,25 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {visible.map((channel) => (
-          <ChannelCard
-            key={channel.id}
-            channel={channel}
-            onEdit={() => {}}
-            onDelete={() => {}}
-          />
-        ))}
+        {visible.map((channel) =>
+          editingId === channel.id ? (
+            <EditChannelPanel
+              key={channel.id}
+              channel={channel}
+              categories={data?.categories ?? []}
+              tags={data?.tags ?? []}
+              onCancel={() => setEditingId(null)}
+              onSave={(updates) => handleSaveEdit(channel.id, updates)}
+            />
+          ) : (
+            <ChannelCard
+              key={channel.id}
+              channel={channel}
+              onEdit={() => setEditingId(channel.id)}
+              onDelete={() => handleDelete(channel.id)}
+            />
+          )
+        )}
       </div>
     </main>
   );
