@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { db } from "@/lib/db";
 import { filterChannels, type ChannelView } from "@/lib/filterChannels";
 import { catColor } from "@/lib/categoryColors";
+import { catIcon } from "@/lib/categoryIcons";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
@@ -47,7 +48,10 @@ export default function Home() {
     }
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
-      .map(([key, count]) => ({ key, label: key, count, color: catColor(key === "Uncategorized" ? undefined : key) }));
+      .map(([key, count]) => {
+        const categoryName = key === "Uncategorized" ? undefined : key;
+        return { key, label: key, count, color: catColor(categoryName), icon: catIcon(categoryName) };
+      });
   }, [channels]);
 
   const tagChips: ChipItem[] = useMemo(() => {

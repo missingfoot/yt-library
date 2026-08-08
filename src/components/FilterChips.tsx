@@ -1,8 +1,11 @@
+import type { LucideIcon } from "lucide-react";
+
 export interface ChipItem {
   key: string;
   label: string;
   count: number;
   color?: string;
+  icon?: LucideIcon;
 }
 
 interface FilterChipsProps {
@@ -16,6 +19,7 @@ export function FilterChips({ items, selected, onToggle }: FilterChipsProps) {
     <div className="flex flex-wrap gap-2">
       {items.map((item) => {
         const isActive = selected.has(item.key);
+        const Icon = item.icon;
         return (
           <button
             key={item.key}
@@ -26,8 +30,10 @@ export function FilterChips({ items, selected, onToggle }: FilterChipsProps) {
                 : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
               }`}
           >
-            {item.color && (
-              <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
+            {Icon ? (
+              <Icon size={13} strokeWidth={2} color={item.color} />
+            ) : (
+              item.color && <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
             )}
             {item.label}
             <span className="text-[var(--text-faint)]">{item.count}</span>
