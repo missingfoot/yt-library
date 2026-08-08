@@ -193,7 +193,7 @@ export default function Home() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <aside className="flex-1 min-w-0 border-r border-[var(--border-soft)] h-full">
+      <aside className="flex-[4] min-w-0 border-r border-[var(--border-soft)] h-full">
         <Sidebar
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
@@ -207,7 +207,7 @@ export default function Home() {
         />
       </aside>
 
-      <main className="flex-1 min-w-0 h-full flex flex-col">
+      <main className="flex-[6] min-w-0 h-full flex flex-col">
         <div className="sticky top-0 z-10 bg-[var(--bg)]">
           <TopBar
             search={search}
@@ -230,7 +230,7 @@ export default function Home() {
         </div>
       </main>
 
-      <aside className="flex-1 min-w-0 border-l border-[var(--border-soft)] h-full">
+      <aside className="flex-[4] min-w-0 border-l border-[var(--border-soft)] h-full">
         <DetailPanel
           channel={selectedChannel}
           categories={data?.categories ?? []}
