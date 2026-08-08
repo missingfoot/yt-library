@@ -9,6 +9,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 import { ChannelCard } from "@/components/ChannelCard";
 import { EditChannelPanel } from "@/components/EditChannelPanel";
+import { AddChannelModal } from "@/components/AddChannelModal";
 import { id } from "@instantdb/react";
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -131,6 +133,43 @@ export default function Home() {
     setEditingId(null);
   }
 
+  async function handleAddChannel(values: {
+    channelId: string;
+    title: string;
+    url: string;
+    category: string | undefined;
+    tags: string[];
+  }) {
+    const txSteps = [];
+    const newId = id();
+    let step = db.tx.channels[newId].update({
+      channelId: values.channelId,
+      title: values.title,
+      url: values.url,
+      createdAt: Date.now(),
+    });
+
+    if (values.category) {
+      const existing = data?.categories.find((c) => c.name === values.category);
+      const categoryId = existing?.id ?? id();
+      if (!existing) txSteps.push(db.tx.categories[categoryId].update({ name: values.category, color: "" }));
+      step = step.link({ category: categoryId });
+    }
+
+    const tagIds: string[] = [];
+    for (const tagName of values.tags) {
+      const existing = data?.tags.find((t) => t.name === tagName);
+      const tagId = existing?.id ?? id();
+      if (!existing) txSteps.push(db.tx.tags[tagId].update({ name: tagName }));
+      tagIds.push(tagId);
+    }
+    if (tagIds.length > 0) step = step.link({ tags: tagIds });
+
+    txSteps.push(step);
+    await db.transact(txSteps);
+    setShowAddModal(false);
+  }
+
   if (isLoading) return <div className="p-10 text-[var(--text-dim)]">Loading...</div>;
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
@@ -142,6 +181,12 @@ export default function Home() {
           Search, filter, and tag your YouTube subscriptions.
         </p>
         <StatsBar total={channels.length} categoryCount={categoryCount} uncategorizedCount={uncategorizedCount} />
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="mt-6 text-xs font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-3 py-1.5"
+        >
+          + add channel
+        </button>
       </div>
 
       <div className="sticky top-0 z-20 bg-[var(--bg)]/90 backdrop-blur py-4 border-b border-[var(--border-soft)] flex flex-col gap-4">
@@ -185,6 +230,15 @@ export default function Home() {
           )
         )}
       </div>
+
+      {showAddModal && (
+        <AddChannelModal
+          categories={data?.categories ?? []}
+          tags={data?.tags ?? []}
+          onAdd={handleAddChannel}
+          onClose={() => setShowAddModal(false)}
+        />
+      )}
     </main>
   );
 }
