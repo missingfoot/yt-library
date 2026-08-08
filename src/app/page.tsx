@@ -7,6 +7,7 @@ import { catColor } from "@/lib/categoryColors";
 import { StatsBar } from "@/components/StatsBar";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
+import { ChannelCard } from "@/components/ChannelCard";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
@@ -113,8 +114,19 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="py-6 text-[var(--text-dim)]">
-        {visible.length} channel{visible.length === 1 ? "" : "s"} (cards land in Task 8)
+      <div className="py-6 text-xs font-mono text-[var(--text-faint)]">
+        {visible.length} channel{visible.length === 1 ? "" : "s"}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {visible.map((channel) => (
+          <ChannelCard
+            key={channel.id}
+            channel={channel}
+            onEdit={() => {}}
+            onDelete={() => {}}
+          />
+        ))}
       </div>
     </main>
   );
