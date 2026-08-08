@@ -10,7 +10,8 @@ import { TopBar } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
 import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
-import { ManageTaxonomyModal } from "@/components/ManageTaxonomyModal";
+import { ManageCategoriesModal } from "@/components/ManageCategoriesModal";
+import { ManageTagsModal } from "@/components/ManageTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
 import { id } from "@instantdb/react";
 
@@ -27,7 +28,8 @@ export default function Home() {
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showManageModal, setShowManageModal] = useState(false);
+  const [showManageCategoriesModal, setShowManageCategoriesModal] = useState(false);
+  const [showManageTagsModal, setShowManageTagsModal] = useState(false);
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -203,7 +205,8 @@ export default function Home() {
           onToggleTag={toggleTag}
           tagMode={tagMode}
           onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
-          onManageTaxonomy={() => setShowManageModal(true)}
+          onManageCategories={() => setShowManageCategoriesModal(true)}
+          onManageTags={() => setShowManageTagsModal(true)}
         />
       </aside>
 
@@ -250,15 +253,21 @@ export default function Home() {
         />
       )}
 
-      {showManageModal && (
-        <ManageTaxonomyModal
+      {showManageCategoriesModal && (
+        <ManageCategoriesModal
           categories={data?.categories ?? []}
+          onRename={handleRenameCategory}
+          onDelete={handleDeleteCategory}
+          onClose={() => setShowManageCategoriesModal(false)}
+        />
+      )}
+
+      {showManageTagsModal && (
+        <ManageTagsModal
           tags={data?.tags ?? []}
-          onRenameCategory={handleRenameCategory}
-          onDeleteCategory={handleDeleteCategory}
-          onRenameTag={handleRenameTag}
-          onDeleteTag={handleDeleteTag}
-          onClose={() => setShowManageModal(false)}
+          onRename={handleRenameTag}
+          onDelete={handleDeleteTag}
+          onClose={() => setShowManageTagsModal(false)}
         />
       )}
     </div>

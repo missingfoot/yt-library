@@ -13,7 +13,8 @@ interface SidebarProps {
   onToggleTag: (key: string) => void;
   tagMode: "and" | "or";
   onToggleTagMode: () => void;
-  onManageTaxonomy: () => void;
+  onManageCategories: () => void;
+  onManageTags: () => void;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -51,7 +52,8 @@ export function Sidebar({
   onToggleTag,
   tagMode,
   onToggleTagMode,
-  onManageTaxonomy,
+  onManageCategories,
+  onManageTags,
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
@@ -73,7 +75,15 @@ export function Sidebar({
       <h1 className="font-serif text-2xl font-semibold">Channel Library</h1>
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
+          <button
+            onClick={onManageCategories}
+            className="text-[10.5px] font-mono text-[var(--text-dim)] uppercase underline underline-offset-2 hover:text-[var(--text)]"
+          >
+            manage cats
+          </button>
+        </div>
         <ChipFilterInput value={categoryFilter} onChange={setCategoryFilter} placeholder="Filter categories..." />
         <FilterChips items={filteredCategoryChips} selected={selectedCategories} onToggle={onToggleCategory} />
       </div>
@@ -91,7 +101,7 @@ export function Sidebar({
               </button>
             )}
             <button
-              onClick={onManageTaxonomy}
+              onClick={onManageTags}
               className="text-[10.5px] font-mono text-[var(--text-dim)] uppercase underline underline-offset-2 hover:text-[var(--text)]"
             >
               manage tags
