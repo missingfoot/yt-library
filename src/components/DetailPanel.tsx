@@ -65,15 +65,6 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
         </button>
       </div>
 
-      <a
-        href={channel.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs font-mono text-[var(--accent)] hover:underline"
-      >
-        open on YouTube ↗
-      </a>
-
       <label className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Title</span>
         <input
