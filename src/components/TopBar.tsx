@@ -15,7 +15,7 @@ export function TopBar({ search, onSearchChange, onAddChannel }: TopBarProps) {
       </div>
       <button
         onClick={onAddChannel}
-        className="flex items-center gap-1.5 text-xs font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 py-2.5 shrink-0"
+        className="flex items-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 py-2.5 shrink-0"
       >
         <Plus size={14} strokeWidth={2.5} />
         add channel
