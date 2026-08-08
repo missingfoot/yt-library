@@ -4,13 +4,12 @@ import { useMemo, useState } from "react";
 import { db } from "@/lib/db";
 import { filterChannels, type ChannelView } from "@/lib/filterChannels";
 import { catColor } from "@/lib/categoryColors";
-import { StatsBar } from "@/components/StatsBar";
-import { SearchBar } from "@/components/SearchBar";
-import { FilterChips, type ChipItem } from "@/components/FilterChips";
-import { ChannelCard } from "@/components/ChannelCard";
-import { EditChannelPanel } from "@/components/EditChannelPanel";
+import { Sidebar } from "@/components/Sidebar";
+import { ChannelRow } from "@/components/ChannelRow";
+import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
 import { ManageTaxonomyModal } from "@/components/ManageTaxonomyModal";
+import { type ChipItem } from "@/components/FilterChips";
 import { id } from "@instantdb/react";
 
 export default function Home() {
@@ -24,7 +23,7 @@ export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showManageModal, setShowManageModal] = useState(false);
 
@@ -94,9 +93,12 @@ export default function Home() {
     [channels, search, selectedCategories, selectedTags, tagMode]
   );
 
+  const selectedChannel = channels.find((c) => c.id === selectedId) ?? null;
+
   function handleDelete(channelId: string) {
     if (!confirm("Delete this channel?")) return;
     db.transact(db.tx.channels[channelId].delete());
+    setSelectedId(null);
   }
 
   async function handleSaveEdit(
@@ -132,7 +134,6 @@ export default function Home() {
 
     txSteps.push(step);
     await db.transact(txSteps);
-    setEditingId(null);
   }
 
   async function handleAddChannel(values: {
@@ -192,70 +193,51 @@ export default function Home() {
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
   return (
-    <main className="max-w-[1180px] mx-auto px-6 pb-20">
-      <div className="py-14 border-b border-[var(--border-soft)]">
-        <h1 className="font-serif text-4xl font-semibold mb-3">Channel Library</h1>
-        <p className="text-[var(--text-dim)] max-w-lg mb-6">
-          Search, filter, and tag your YouTube subscriptions.
-        </p>
-        <StatsBar total={channels.length} categoryCount={categoryCount} uncategorizedCount={uncategorizedCount} />
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="mt-6 text-xs font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-3 py-1.5"
-          >
-            + add channel
-          </button>
-          <button
-            onClick={() => setShowManageModal(true)}
-            className="mt-6 text-xs font-mono text-[var(--text-dim)] border border-[var(--border)] rounded px-3 py-1.5"
-          >
-            manage categories & tags
-          </button>
+    <div className="h-screen flex overflow-hidden">
+      <aside className="w-[300px] shrink-0 border-r border-[var(--border-soft)] h-full">
+        <Sidebar
+          total={channels.length}
+          categoryCount={categoryCount}
+          uncategorizedCount={uncategorizedCount}
+          search={search}
+          onSearchChange={setSearch}
+          categoryChips={categoryChips}
+          selectedCategories={selectedCategories}
+          onToggleCategory={toggleCategory}
+          tagChips={tagChips}
+          selectedTags={selectedTags}
+          onToggleTag={toggleTag}
+          tagMode={tagMode}
+          onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
+          onAddChannel={() => setShowAddModal(true)}
+          onManageTaxonomy={() => setShowManageModal(true)}
+        />
+      </aside>
+
+      <main className="flex-1 h-full overflow-y-auto">
+        <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)] sticky top-0 bg-[var(--bg)]">
+          {visible.length} channel{visible.length === 1 ? "" : "s"}
         </div>
-      </div>
+        {visible.map((channel) => (
+          <ChannelRow
+            key={channel.id}
+            channel={channel}
+            isSelected={channel.id === selectedId}
+            onSelect={() => setSelectedId(channel.id)}
+          />
+        ))}
+      </main>
 
-      <div className="sticky top-0 z-20 bg-[var(--bg)]/90 backdrop-blur py-4 border-b border-[var(--border-soft)] flex flex-col gap-4">
-        <SearchBar value={search} onChange={setSearch} />
-        <FilterChips items={categoryChips} selected={selectedCategories} onToggle={toggleCategory} />
-        <div className="flex items-center gap-3">
-          <FilterChips items={tagChips} selected={selectedTags} onToggle={toggleTag} />
-          {selectedTags.size > 1 && (
-            <button
-              onClick={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
-              className="text-xs font-mono text-[var(--accent)] uppercase shrink-0"
-            >
-              match: {tagMode}
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="py-6 text-xs font-mono text-[var(--text-faint)]">
-        {visible.length} channel{visible.length === 1 ? "" : "s"}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {visible.map((channel) =>
-          editingId === channel.id ? (
-            <EditChannelPanel
-              key={channel.id}
-              channel={channel}
-              categories={data?.categories ?? []}
-              tags={data?.tags ?? []}
-              onCancel={() => setEditingId(null)}
-              onSave={(updates) => handleSaveEdit(channel.id, updates)}
-            />
-          ) : (
-            <ChannelCard
-              key={channel.id}
-              channel={channel}
-              onEdit={() => setEditingId(channel.id)}
-              onDelete={() => handleDelete(channel.id)}
-            />
-          )
-        )}
-      </div>
+      <aside className="w-[360px] shrink-0 border-l border-[var(--border-soft)] h-full">
+        <DetailPanel
+          channel={selectedChannel}
+          categories={data?.categories ?? []}
+          tags={data?.tags ?? []}
+          onSave={handleSaveEdit}
+          onDelete={handleDelete}
+          onClose={() => setSelectedId(null)}
+        />
+      </aside>
 
       {showAddModal && (
         <AddChannelModal
@@ -277,6 +259,6 @@ export default function Home() {
           onClose={() => setShowManageModal(false)}
         />
       )}
-    </main>
+    </div>
   );
 }
