@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Delete } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
@@ -25,10 +25,19 @@ function ChipFilterInput({ value, onChange, placeholder }: { value: string; onCh
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded border border-[var(--border)] bg-[var(--surface)] pl-7 pr-2 py-1
+        className="w-full rounded border border-[var(--border)] bg-[var(--surface)] pl-7 pr-7 py-1
                    text-[11px] text-[var(--text)] placeholder:text-[var(--text-faint)]
                    focus:outline-none focus:border-[var(--accent-line)]"
       />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          title="Clear"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text)]"
+        >
+          <Delete size={12} strokeWidth={2} />
+        </button>
+      )}
     </div>
   );
 }

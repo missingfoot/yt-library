@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, Delete } from "lucide-react";
 
 interface SearchBarProps {
   value: string;
@@ -18,10 +18,19 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search channels..."
-        className="w-full rounded-md border border-[var(--border)] bg-[var(--surface)] pl-9 pr-4 py-2.5
+        className="w-full rounded-md border border-[var(--border)] bg-[var(--surface)] pl-9 pr-9 py-2.5
                    text-sm text-[var(--text)] placeholder:text-[var(--text-faint)]
                    focus:outline-none focus:border-[var(--accent-line)]"
       />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          title="Clear search"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text)]"
+        >
+          <Delete size={16} strokeWidth={2} />
+        </button>
+      )}
     </div>
   );
 }
