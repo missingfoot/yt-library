@@ -35,7 +35,7 @@ function ChipFilterInput({ value, onChange, placeholder }: { value: string; onCh
           title="Clear"
           className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text)]"
         >
-          <Delete size={12} strokeWidth={2} />
+          <Delete size={15} strokeWidth={2} />
         </button>
       )}
     </div>

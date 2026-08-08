@@ -28,7 +28,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           title="Clear search"
           className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text)]"
         >
-          <Delete size={16} strokeWidth={2} />
+          <Delete size={20} strokeWidth={2} />
         </button>
       )}
     </div>
