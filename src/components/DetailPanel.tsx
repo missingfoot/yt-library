@@ -59,7 +59,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-soft)] sticky top-0 z-10 bg-[var(--bg)] shrink-0">
+      <div className="flex items-center justify-between px-5 py-[19px] border-b border-[var(--border-soft)] sticky top-0 z-10 bg-[var(--bg)] shrink-0">
         <h2 className="font-serif text-lg">Edit channel</h2>
         <button onClick={onClose} title="Close" className="text-[var(--text-dim)] hover:text-[var(--text)]">
           <X size={16} strokeWidth={2} />
