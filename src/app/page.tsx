@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { filterChannels, type ChannelView } from "@/lib/filterChannels";
 import { catColor } from "@/lib/categoryColors";
 import { Sidebar } from "@/components/Sidebar";
+import { TopBar } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
 import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
@@ -199,8 +200,6 @@ export default function Home() {
           total={channels.length}
           categoryCount={categoryCount}
           uncategorizedCount={uncategorizedCount}
-          search={search}
-          onSearchChange={setSearch}
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
           onToggleCategory={toggleCategory}
@@ -209,23 +208,31 @@ export default function Home() {
           onToggleTag={toggleTag}
           tagMode={tagMode}
           onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
-          onAddChannel={() => setShowAddModal(true)}
-          onManageTaxonomy={() => setShowManageModal(true)}
         />
       </aside>
 
-      <main className="flex-1 min-w-0 h-full overflow-y-auto">
-        <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)] sticky top-0 bg-[var(--bg)]">
-          {visible.length} channel{visible.length === 1 ? "" : "s"}
-        </div>
-        {visible.map((channel) => (
-          <ChannelRow
-            key={channel.id}
-            channel={channel}
-            isSelected={channel.id === selectedId}
-            onSelect={() => setSelectedId(channel.id)}
+      <main className="flex-1 min-w-0 h-full flex flex-col">
+        <div className="sticky top-0 z-10 bg-[var(--bg)]">
+          <TopBar
+            search={search}
+            onSearchChange={setSearch}
+            onAddChannel={() => setShowAddModal(true)}
+            onManageTaxonomy={() => setShowManageModal(true)}
           />
-        ))}
+          <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)]">
+            {visible.length} channel{visible.length === 1 ? "" : "s"}
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {visible.map((channel) => (
+            <ChannelRow
+              key={channel.id}
+              channel={channel}
+              isSelected={channel.id === selectedId}
+              onSelect={() => setSelectedId(channel.id)}
+            />
+          ))}
+        </div>
       </main>
 
       <aside className="flex-1 min-w-0 border-l border-[var(--border-soft)] h-full">

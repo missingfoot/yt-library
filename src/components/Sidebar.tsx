@@ -1,13 +1,10 @@
 import { StatsBar } from "@/components/StatsBar";
-import { SearchBar } from "@/components/SearchBar";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
   total: number;
   categoryCount: number;
   uncategorizedCount: number;
-  search: string;
-  onSearchChange: (value: string) => void;
   categoryChips: ChipItem[];
   selectedCategories: Set<string>;
   onToggleCategory: (key: string) => void;
@@ -16,16 +13,12 @@ interface SidebarProps {
   onToggleTag: (key: string) => void;
   tagMode: "and" | "or";
   onToggleTagMode: () => void;
-  onAddChannel: () => void;
-  onManageTaxonomy: () => void;
 }
 
 export function Sidebar({
   total,
   categoryCount,
   uncategorizedCount,
-  search,
-  onSearchChange,
   categoryChips,
   selectedCategories,
   onToggleCategory,
@@ -34,8 +27,6 @@ export function Sidebar({
   onToggleTag,
   tagMode,
   onToggleTagMode,
-  onAddChannel,
-  onManageTaxonomy,
 }: SidebarProps) {
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
@@ -45,23 +36,6 @@ export function Sidebar({
       </div>
 
       <StatsBar total={total} categoryCount={categoryCount} uncategorizedCount={uncategorizedCount} />
-
-      <div className="flex gap-2">
-        <button
-          onClick={onAddChannel}
-          className="flex-1 text-xs font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-3 py-1.5"
-        >
-          + add channel
-        </button>
-        <button
-          onClick={onManageTaxonomy}
-          className="flex-1 text-xs font-mono text-[var(--text-dim)] border border-[var(--border)] rounded px-3 py-1.5"
-        >
-          manage tags
-        </button>
-      </div>
-
-      <SearchBar value={search} onChange={onSearchChange} />
 
       <div className="flex flex-col gap-2">
         <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
