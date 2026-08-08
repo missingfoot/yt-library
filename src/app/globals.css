@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #12151c;
-  --bg-2: #0e1116;
-  --surface: #1a1e27;
-  --surface-hover: #212636;
-  --surface-active: #262c3c;
-  --border: #282e3c;
-  --border-soft: #20242f;
-  --text: #ece9e2;
-  --text-dim: #9198a9;
-  --text-faint: #5c6274;
+  --bg: #141414;
+  --bg-2: #101010;
+  --surface: #1c1c1c;
+  --surface-hover: #232323;
+  --surface-active: #2a2a2a;
+  --border: #2e2e2e;
+  --border-soft: #232323;
+  --text: #ececec;
+  --text-dim: #9a9a9a;
+  --text-faint: #636363;
   --accent: #e8a33d;
   --accent-soft: rgba(232, 163, 61, 0.14);
   --accent-line: rgba(232, 163, 61, 0.35);
@@ -19,4 +19,27 @@
 body {
   background: var(--bg);
   color: var(--text);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-faint);
 }

@@ -194,7 +194,7 @@ export default function Home() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <aside className="w-[300px] shrink-0 border-r border-[var(--border-soft)] h-full">
+      <aside className="flex-1 min-w-0 border-r border-[var(--border-soft)] h-full">
         <Sidebar
           total={channels.length}
           categoryCount={categoryCount}
@@ -214,7 +214,7 @@ export default function Home() {
         />
       </aside>
 
-      <main className="flex-1 h-full overflow-y-auto">
+      <main className="flex-1 min-w-0 h-full overflow-y-auto">
         <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)] sticky top-0 bg-[var(--bg)]">
           {visible.length} channel{visible.length === 1 ? "" : "s"}
         </div>
@@ -228,7 +228,7 @@ export default function Home() {
         ))}
       </main>
 
-      <aside className="w-[360px] shrink-0 border-l border-[var(--border-soft)] h-full">
+      <aside className="flex-1 min-w-0 border-l border-[var(--border-soft)] h-full">
         <DetailPanel
           channel={selectedChannel}
           categories={data?.categories ?? []}
