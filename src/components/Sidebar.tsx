@@ -9,6 +9,7 @@ interface SidebarProps {
   onToggleTag: (key: string) => void;
   tagMode: "and" | "or";
   onToggleTagMode: () => void;
+  onManageTaxonomy: () => void;
 }
 
 export function Sidebar({
@@ -20,6 +21,7 @@ export function Sidebar({
   onToggleTag,
   tagMode,
   onToggleTagMode,
+  onManageTaxonomy,
 }: SidebarProps) {
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
@@ -33,14 +35,22 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</h3>
-          {selectedTags.size > 1 && (
+          <div className="flex items-center gap-3">
+            {selectedTags.size > 1 && (
+              <button
+                onClick={onToggleTagMode}
+                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              >
+                match: {tagMode}
+              </button>
+            )}
             <button
-              onClick={onToggleTagMode}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              onClick={onManageTaxonomy}
+              className="text-[10.5px] font-mono text-[var(--text-dim)] uppercase underline underline-offset-2 hover:text-[var(--text)]"
             >
-              match: {tagMode}
+              manage tags
             </button>
-          )}
+          </div>
         </div>
         <FilterChips items={tagChips} selected={selectedTags} onToggle={onToggleTag} />
       </div>

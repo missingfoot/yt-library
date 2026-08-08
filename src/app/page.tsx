@@ -199,6 +199,7 @@ export default function Home() {
           onToggleTag={toggleTag}
           tagMode={tagMode}
           onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
+          onManageTaxonomy={() => setShowManageModal(true)}
         />
       </aside>
 
@@ -208,7 +209,6 @@ export default function Home() {
             search={search}
             onSearchChange={setSearch}
             onAddChannel={() => setShowAddModal(true)}
-            onManageTaxonomy={() => setShowManageModal(true)}
           />
           <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)]">
             {visible.length} channel{visible.length === 1 ? "" : "s"}
