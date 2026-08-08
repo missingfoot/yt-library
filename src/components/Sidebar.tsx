@@ -23,6 +23,8 @@ export function Sidebar({
 }: SidebarProps) {
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
+      <h1 className="font-serif text-2xl font-semibold">Channel Library</h1>
+
       <div className="flex flex-col gap-2">
         <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
         <FilterChips items={categoryChips} selected={selectedCategories} onToggle={onToggleCategory} />
