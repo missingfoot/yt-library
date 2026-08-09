@@ -64,12 +64,13 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
         <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-3" />
       )}
       <span
-        className={`shrink-0 whitespace-nowrap text-sm font-medium ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`}
-        style={{ minWidth: 240 }}
+        className={`shrink-0 whitespace-nowrap text-sm font-medium min-w-[240px]
+          max-[767px]:min-w-0 max-[767px]:shrink max-[767px]:flex-1 max-[767px]:truncate
+          ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`}
       >
         {channel.title}
       </span>
-      <div className="flex items-center gap-6 shrink-0">
+      <div className="flex items-center gap-6 shrink-0 max-[767px]:hidden">
         <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 whitespace-nowrap text-left">{categoryLabel}</span>
         <span className="flex flex-nowrap gap-1.5 shrink-0 text-left">
           {channel.tags.map((tag) => (
