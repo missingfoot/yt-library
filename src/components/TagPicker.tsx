@@ -13,6 +13,8 @@ interface TagOption {
 
 type SortMode = "count" | "alpha";
 
+const sortLabel: Record<SortMode, string> = { count: "123", alpha: "ABC" };
+
 interface TagPickerProps {
   allTags: TagOption[];
   tagCounts?: ChipItem[];
@@ -102,7 +104,7 @@ export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRename
           className="text-[10.5px] font-mono text-[var(--accent)] uppercase
             max-[767px]:text-xs max-[767px]:normal-case max-[767px]:rounded max-[767px]:border max-[767px]:border-[var(--accent-line)] max-[767px]:px-2.5 max-[767px]:py-1.5"
         >
-          sort: {sort}
+          sort: {sortLabel[sort]}
         </button>
       </div>
       <div className="relative">

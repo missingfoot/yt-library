@@ -27,6 +27,8 @@ interface SidebarProps {
 
 type SortMode = "count" | "alpha";
 
+const sortLabel: Record<SortMode, string> = { count: "123", alpha: "ABC" };
+
 function sortChips(chips: ChipItem[], mode: SortMode): ChipItem[] {
   const sorted = [...chips];
   if (mode === "alpha") {
@@ -152,7 +154,7 @@ export function Sidebar({
               onClick={() => setCategorySort((m) => (m === "count" ? "alpha" : "count"))}
               className={headerButtonClass}
             >
-              sort: {categorySort}
+              sort: {sortLabel[categorySort]}
             </button>
             <HeaderPipe />
             <button
@@ -192,7 +194,7 @@ export function Sidebar({
               onClick={() => setTagSort((m) => (m === "count" ? "alpha" : "count"))}
               className={headerButtonClass}
             >
-              sort: {tagSort}
+              sort: {sortLabel[tagSort]}
             </button>
             <HeaderPipe />
             <button
