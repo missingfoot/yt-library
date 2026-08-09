@@ -99,13 +99,14 @@ export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRename
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>
         <button
           onClick={() => setSort((m) => (m === "count" ? "alpha" : "count"))}
-          className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+          className="text-[10.5px] font-mono text-[var(--accent)] uppercase
+            max-[767px]:text-xs max-[767px]:normal-case max-[767px]:rounded max-[767px]:border max-[767px]:border-[var(--accent-line)] max-[767px]:px-2.5 max-[767px]:py-1.5"
         >
           sort: {sort}
         </button>
       </div>
       <div className="relative">
-        <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none" />
+        <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none max-[767px]:size-4 max-[767px]:left-3" />
         <input
           type="text"
           value={filter}
@@ -114,7 +115,8 @@ export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRename
           placeholder="Filter tags..."
           className="w-full rounded border border-[var(--border)] bg-[var(--surface)] pl-7 pr-2 py-1
                      text-[11px] text-[var(--text)] placeholder:text-[var(--text-faint)]
-                     focus:outline-none focus:border-[var(--accent-line)]"
+                     focus:outline-none focus:border-[var(--accent-line)]
+                     max-[767px]:pl-9 max-[767px]:py-2.5 max-[767px]:text-sm"
         />
       </div>
       {trimmedFilter && !exactMatch && (

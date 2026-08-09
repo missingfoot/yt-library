@@ -33,25 +33,25 @@ export function ChipContextMenu({ x, y, onRename, onDelete, onMerge, onClose }: 
     <div
       ref={ref}
       style={{ position: "fixed", left: x, top: y }}
-      className="z-50 flex flex-col rounded border border-[var(--border)] bg-[var(--surface)] shadow-lg overflow-hidden min-w-[100px]"
+      className="z-50 flex flex-col rounded border border-[var(--border)] bg-[var(--surface)] shadow-lg overflow-hidden min-w-[100px] max-[767px]:min-w-[140px]"
     >
       <button
         onClick={onRename}
-        className="px-3 py-1.5 text-xs font-mono text-left text-[var(--text)] hover:bg-[var(--surface-hover)]"
+        className="px-3 py-1.5 text-xs font-mono text-left text-[var(--text)] hover:bg-[var(--surface-hover)] max-[767px]:px-4 max-[767px]:py-3 max-[767px]:text-sm"
       >
         rename
       </button>
       {onMerge && (
         <button
           onClick={onMerge}
-          className="px-3 py-1.5 text-xs font-mono text-left text-[var(--text)] hover:bg-[var(--surface-hover)]"
+          className="px-3 py-1.5 text-xs font-mono text-left text-[var(--text)] hover:bg-[var(--surface-hover)] max-[767px]:px-4 max-[767px]:py-3 max-[767px]:text-sm"
         >
           merge
         </button>
       )}
       <button
         onClick={onDelete}
-        className="px-3 py-1.5 text-xs font-mono text-left text-red-400 hover:bg-[var(--surface-hover)]"
+        className="px-3 py-1.5 text-xs font-mono text-left text-red-400 hover:bg-[var(--surface-hover)] max-[767px]:px-4 max-[767px]:py-3 max-[767px]:text-sm"
       >
         delete
       </button>

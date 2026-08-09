@@ -38,13 +38,13 @@ function sortChips(chips: ChipItem[], mode: SortMode): ChipItem[] {
 }
 
 function HeaderPipe() {
-  return <span className="inline-block w-px h-2.5 bg-[var(--border)]" />;
+  return <span className="inline-block w-px h-2.5 bg-[var(--border)] max-[767px]:hidden" />;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
   return (
     <div className="relative">
-      <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none" />
+      <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none max-[767px]:size-4 max-[767px]:left-3" />
       <input
         type="text"
         value={value}
@@ -52,7 +52,8 @@ function ChipFilterInput({ value, onChange, placeholder }: { value: string; onCh
         placeholder={placeholder}
         className="w-full rounded border border-[var(--border)] bg-[var(--surface)] pl-7 pr-7 py-1
                    text-[11px] text-[var(--text)] placeholder:text-[var(--text-faint)]
-                   focus:outline-none focus:border-[var(--accent-line)]"
+                   focus:outline-none focus:border-[var(--accent-line)]
+                   max-[767px]:pl-9 max-[767px]:pr-9 max-[767px]:py-2.5 max-[767px]:text-sm"
       />
       {value && (
         <button
@@ -60,12 +61,16 @@ function ChipFilterInput({ value, onChange, placeholder }: { value: string; onCh
           title="Clear"
           className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text)]"
         >
-          <Delete size={15} strokeWidth={2} />
+          <Delete size={15} strokeWidth={2} className="max-[767px]:size-[18px]" />
         </button>
       )}
     </div>
   );
 }
+
+const headerButtonClass =
+  "text-[10.5px] font-mono text-[var(--accent)] uppercase " +
+  "max-[767px]:text-xs max-[767px]:normal-case max-[767px]:rounded max-[767px]:border max-[767px]:border-[var(--accent-line)] max-[767px]:px-2.5 max-[767px]:py-1.5";
 
 export function Sidebar({
   onClose,
@@ -142,17 +147,17 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 max-[767px]:flex-wrap max-[767px]:gap-1.5">
             <button
               onClick={() => setCategorySort((m) => (m === "count" ? "alpha" : "count"))}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              className={headerButtonClass}
             >
               sort: {categorySort}
             </button>
             <HeaderPipe />
             <button
               onClick={onToggleCategoryMode}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              className={headerButtonClass}
             >
               match: {categoryMode}
             </button>
@@ -161,7 +166,7 @@ export function Sidebar({
                 <HeaderPipe />
                 <button
                   onClick={onClearCategories}
-                  className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+                  className={headerButtonClass}
                 >
                   clear
                 </button>
@@ -182,17 +187,17 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</h3>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 max-[767px]:flex-wrap max-[767px]:gap-1.5">
             <button
               onClick={() => setTagSort((m) => (m === "count" ? "alpha" : "count"))}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              className={headerButtonClass}
             >
               sort: {tagSort}
             </button>
             <HeaderPipe />
             <button
               onClick={onToggleTagMode}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              className={headerButtonClass}
             >
               match: {tagMode}
             </button>
@@ -201,7 +206,7 @@ export function Sidebar({
                 <HeaderPipe />
                 <button
                   onClick={onClearTags}
-                  className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+                  className={headerButtonClass}
                 >
                   clear
                 </button>
