@@ -253,7 +253,6 @@ export default function Home() {
           onSave={handleSaveEdit}
           onDelete={handleDelete}
           onFetchAvatar={handleFetchAvatar}
-          onClose={() => setSelectedId(null)}
         />
       </aside>
 

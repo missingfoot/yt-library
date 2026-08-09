@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, ImageDown, RefreshCw } from "lucide-react";
+import { ImageDown, RefreshCw } from "lucide-react";
 import { CategorySelect } from "@/components/CategorySelect";
 import { TagPicker } from "@/components/TagPicker";
 import type { ChannelView } from "@/lib/filterChannels";
@@ -22,10 +22,9 @@ interface DetailPanelProps {
   onSave: (channelId: string, updates: { title: string; url: string; category: string | undefined; tags: string[] }) => void;
   onDelete: (channelId: string) => void;
   onFetchAvatar: (channelId: string, url: string) => Promise<void>;
-  onClose: () => void;
 }
 
-export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar, onClose }: DetailPanelProps) {
+export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar }: DetailPanelProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -64,13 +63,6 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-5 py-[19px] border-b border-[var(--border-soft)] sticky top-0 z-10 bg-[var(--bg)] shrink-0">
-        <h2 className="font-serif text-lg">Edit channel</h2>
-        <button onClick={onClose} title="Close" className="text-[var(--text-dim)] hover:text-[var(--text)]">
-          <X size={16} strokeWidth={2} />
-        </button>
-      </div>
-
       <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
 
       <button
