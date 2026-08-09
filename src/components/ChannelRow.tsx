@@ -49,7 +49,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       ) : (
         <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-3" />
       )}
-      <span className={`font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
+      <span className={`text-sm font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
         {channel.title}
       </span>
       <div className="flex items-center gap-6 ml-auto shrink-0">
