@@ -12,14 +12,14 @@ function isAllowedHost(hostname: string): boolean {
   return hostname === "youtube.com" || hostname.endsWith(".youtube.com");
 }
 
-const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
+const OWNER_EMAIL = "f7vaftygt83zlsraviruvykw@jamessparkes.com";
 
 async function requireUser(request: NextRequest): Promise<boolean> {
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return false;
   try {
     const user = await db.auth.verifyToken(token);
-    return user.email === OWNER_EMAIL;
+    return user.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
   } catch {
     return false;
   }

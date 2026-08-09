@@ -16,7 +16,7 @@ import { AuthModal } from "@/components/AuthModal";
 import { id } from "@instantdb/react";
 import { useDragScroll } from "@/lib/useDragScroll";
 
-const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
+const OWNER_EMAIL = "f7vaftygt83zlsraviruvykw@jamessparkes.com";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
@@ -26,7 +26,7 @@ export default function Home() {
   });
   const { user } = db.useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
-  const isOwner = user?.email === OWNER_EMAIL;
+  const isOwner = user?.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
 
   function requireAuth(): boolean {
     if (!user || !isOwner) {

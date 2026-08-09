@@ -1,6 +1,6 @@
 import type { InstantRules } from "@instantdb/react";
 
-const isOwner = "auth.email == 'f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com'";
+const isOwner = "auth.email == 'f7vaftygt83zlsraviruvykw@jamessparkes.com'";
 
 const rules = {
   channels: {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { db } from "@/lib/db";
 
-const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
+const OWNER_EMAIL = "f7vaftygt83zlsraviruvykw@jamessparkes.com";
 
 export function AuthModal({ onClose }: { onClose: () => void }) {
   const { user } = db.useAuth();
@@ -17,7 +17,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
-    if (email.trim().toLowerCase() !== OWNER_EMAIL) {
+    if (email.trim().toLowerCase() !== OWNER_EMAIL.toLowerCase()) {
       setError("This library isn't open for editing by other accounts.");
       return;
     }
@@ -62,7 +62,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {user && user.email !== OWNER_EMAIL ? (
+        {user && user.email?.toLowerCase() !== OWNER_EMAIL.toLowerCase() ? (
           <div className="flex flex-col gap-3">
             <p className="text-xs text-[var(--text-faint)]">
               Signed in as {user.email}, which isn&apos;t the account that can make changes.
