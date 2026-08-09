@@ -15,6 +15,10 @@ interface SidebarProps {
   onToggleTagMode: () => void;
   onManageCategories: () => void;
   onManageTags: () => void;
+  onRenameCategory: (id: string, newName: string) => void;
+  onDeleteCategory: (id: string) => void;
+  onRenameTag: (id: string, newName: string) => void;
+  onDeleteTag: (id: string) => void;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -54,6 +58,10 @@ export function Sidebar({
   onToggleTagMode,
   onManageCategories,
   onManageTags,
+  onRenameCategory,
+  onDeleteCategory,
+  onRenameTag,
+  onDeleteTag,
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
@@ -85,7 +93,13 @@ export function Sidebar({
           </button>
         </div>
         <ChipFilterInput value={categoryFilter} onChange={setCategoryFilter} placeholder="Filter categories..." />
-        <FilterChips items={filteredCategoryChips} selected={selectedCategories} onToggle={onToggleCategory} />
+        <FilterChips
+          items={filteredCategoryChips}
+          selected={selectedCategories}
+          onToggle={onToggleCategory}
+          onRename={onRenameCategory}
+          onDelete={onDeleteCategory}
+        />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -109,7 +123,13 @@ export function Sidebar({
           </div>
         </div>
         <ChipFilterInput value={tagFilter} onChange={setTagFilter} placeholder="Filter tags..." />
-        <FilterChips items={filteredTagChips} selected={selectedTags} onToggle={onToggleTag} />
+        <FilterChips
+          items={filteredTagChips}
+          selected={selectedTags}
+          onToggle={onToggleTag}
+          onRename={onRenameTag}
+          onDelete={onDeleteTag}
+        />
       </div>
     </div>
   );

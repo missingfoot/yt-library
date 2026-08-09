@@ -22,9 +22,11 @@ interface DetailPanelProps {
   onSave: (channelId: string, updates: { title: string; url: string; category: string | undefined; tags: string[] }) => void;
   onDelete: (channelId: string) => void;
   onFetchAvatar: (channelId: string, url: string) => Promise<void>;
+  onRenameTag: (id: string, newName: string) => void;
+  onDeleteTag: (id: string) => void;
 }
 
-export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar }: DetailPanelProps) {
+export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar, onRenameTag, onDeleteTag }: DetailPanelProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -127,7 +129,13 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
 
       <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>
-        <TagPicker allTags={tags} selectedTags={selectedTags} onToggle={toggleTag} />
+        <TagPicker
+          allTags={tags}
+          selectedTags={selectedTags}
+          onToggle={toggleTag}
+          onRenameTag={onRenameTag}
+          onDeleteTag={onDeleteTag}
+        />
       </div>
 
       <button

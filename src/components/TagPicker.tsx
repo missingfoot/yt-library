@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search, Plus } from "lucide-react";
+import { ChipContextMenu } from "@/components/ChipContextMenu";
 
 interface TagOption {
   id: string;
@@ -12,10 +13,17 @@ interface TagPickerProps {
   allTags: TagOption[];
   selectedTags: string[];
   onToggle: (name: string) => void;
+  onRenameTag?: (id: string, newName: string) => void;
+  onDeleteTag?: (id: string) => void;
 }
 
-export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
+export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDeleteTag }: TagPickerProps) {
   const [filter, setFilter] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
+
+  const realTagIds = useMemo(() => new Set(allTags.map((t) => t.id)), [allTags]);
+  const canEdit = !!(onRenameTag || onDeleteTag);
 
   const combined = useMemo(() => {
     const seen = new Map<string, string>();
@@ -77,11 +85,42 @@ export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
       <div className="flex flex-wrap gap-2">
         {filtered.map((t) => {
           const isSelected = selectedTags.includes(t.name);
+          const isEditing = editingId === t.id;
+          const isRealTag = realTagIds.has(t.id);
+
+          if (isEditing) {
+            return (
+              <input
+                key={t.id}
+                autoFocus
+                defaultValue={t.name}
+                onFocus={(e) => e.target.select()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const val = e.currentTarget.value.trim();
+                    if (val && onRenameTag) onRenameTag(t.id, val);
+                    setEditingId(null);
+                  } else if (e.key === "Escape") {
+                    setEditingId(null);
+                  }
+                }}
+                onBlur={() => setEditingId(null)}
+                className="rounded-full border border-[var(--accent-line)] bg-[var(--bg)] px-3 py-1.5 text-xs font-medium text-[var(--text)] focus:outline-none"
+                style={{ width: `${Math.max(t.name.length + 4, 8)}ch` }}
+              />
+            );
+          }
+
           return (
             <button
               key={t.id}
               type="button"
               onClick={() => onToggle(t.name)}
+              onContextMenu={(e) => {
+                if (!canEdit || !isRealTag) return;
+                e.preventDefault();
+                setMenu({ id: t.id, x: e.clientX, y: e.clientY });
+              }}
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors
                 ${isSelected
                   ? "border-[var(--accent-line)] bg-[var(--accent-soft)] text-[var(--accent)]"
@@ -93,6 +132,23 @@ export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
           );
         })}
       </div>
+
+      {menu && (
+        <ChipContextMenu
+          x={menu.x}
+          y={menu.y}
+          onRename={() => {
+            setEditingId(menu.id);
+            setMenu(null);
+          }}
+          onDelete={() => {
+            const t = combined.find((c) => c.id === menu.id);
+            if (t && onDeleteTag && confirm(`Delete "${t.name}"?`)) onDeleteTag(menu.id);
+            setMenu(null);
+          }}
+          onClose={() => setMenu(null)}
+        />
+      )}
     </div>
   );
 }

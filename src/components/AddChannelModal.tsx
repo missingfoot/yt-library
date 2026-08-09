@@ -19,9 +19,11 @@ interface AddChannelModalProps {
   tags: TagOption[];
   onAdd: (values: { channelId: string; title: string; url: string; category: string | undefined; tags: string[] }) => void;
   onClose: () => void;
+  onRenameTag: (id: string, newName: string) => void;
+  onDeleteTag: (id: string) => void;
 }
 
-export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannelModalProps) {
+export function AddChannelModal({ categories, tags, onAdd, onClose, onRenameTag, onDeleteTag }: AddChannelModalProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -48,7 +50,13 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
           className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
         />
         <CategorySelect value={category} categories={categories} onChange={setCategory} />
-        <TagPicker allTags={tags} selectedTags={selectedTags} onToggle={toggleTag} />
+        <TagPicker
+          allTags={tags}
+          selectedTags={selectedTags}
+          onToggle={toggleTag}
+          onRenameTag={onRenameTag}
+          onDeleteTag={onDeleteTag}
+        />
 
         <div className="flex gap-2 justify-end pt-2">
           <button onClick={onClose} className="text-xs font-mono text-[var(--text-dim)] px-3 py-1.5">

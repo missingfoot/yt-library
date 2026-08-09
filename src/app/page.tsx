@@ -55,9 +55,10 @@ export default function Home() {
       .sort((a, b) => b[1] - a[1])
       .map(([key, count]) => {
         const categoryName = key === "Uncategorized" ? undefined : key;
-        return { key, label: key, count, color: catColor(categoryName), icon: catIcon(categoryName) };
+        const entityId = categoryName ? data?.categories.find((c) => c.name === categoryName)?.id : undefined;
+        return { key, label: key, count, color: catColor(categoryName), icon: catIcon(categoryName), entityId };
       });
-  }, [channels]);
+  }, [channels, data?.categories]);
 
   const tagChips: ChipItem[] = useMemo(() => {
     const counts = new Map<string, number>();
@@ -66,8 +67,8 @@ export default function Home() {
     }
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
-      .map(([key, count]) => ({ key, label: key, count }));
-  }, [channels]);
+      .map(([key, count]) => ({ key, label: key, count, entityId: data?.tags.find((t) => t.name === key)?.id }));
+  }, [channels, data?.tags]);
 
   function toggleCategory(key: string) {
     setSelectedCategories((prev) => {
@@ -224,6 +225,10 @@ export default function Home() {
           onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
           onManageCategories={() => setShowManageCategoriesModal(true)}
           onManageTags={() => setShowManageTagsModal(true)}
+          onRenameCategory={handleRenameCategory}
+          onDeleteCategory={handleDeleteCategory}
+          onRenameTag={handleRenameTag}
+          onDeleteTag={handleDeleteTag}
         />
       </aside>
 
@@ -261,6 +266,8 @@ export default function Home() {
           onSave={handleSaveEdit}
           onDelete={handleDelete}
           onFetchAvatar={handleFetchAvatar}
+          onRenameTag={handleRenameTag}
+          onDeleteTag={handleDeleteTag}
         />
       </aside>
 
@@ -270,6 +277,8 @@ export default function Home() {
           tags={data?.tags ?? []}
           onAdd={handleAddChannel}
           onClose={() => setShowAddModal(false)}
+          onRenameTag={handleRenameTag}
+          onDeleteTag={handleDeleteTag}
         />
       )}
 
