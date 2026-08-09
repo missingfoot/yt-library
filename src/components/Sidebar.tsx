@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, Delete } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
@@ -87,15 +87,12 @@ export function Sidebar({
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
-  const [categorySort, setCategorySortState] = useState<SortMode>("count");
-  const [tagSort, setTagSortState] = useState<SortMode>("count");
-
-  useEffect(() => {
-    const storedCategory = window.localStorage.getItem("categorySort");
-    if (storedCategory === "alpha") setCategorySortState("alpha");
-    const storedTag = window.localStorage.getItem("tagSort");
-    if (storedTag === "alpha") setTagSortState("alpha");
-  }, []);
+  const [categorySort, setCategorySortState] = useState<SortMode>(
+    () => (window.localStorage.getItem("categorySort") === "alpha" ? "alpha" : "count")
+  );
+  const [tagSort, setTagSortState] = useState<SortMode>(
+    () => (window.localStorage.getItem("tagSort") === "alpha" ? "alpha" : "count")
+  );
 
   function setCategorySort(update: (prev: SortMode) => SortMode) {
     setCategorySortState((prev) => {
