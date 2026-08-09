@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { CategorySelect } from "@/components/CategorySelect";
+import { deriveChannelId } from "@/lib/deriveChannelId";
 
 interface CategoryOption {
   id: string;
@@ -21,7 +22,6 @@ interface AddChannelModalProps {
 }
 
 export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannelModalProps) {
-  const [channelId, setChannelId] = useState("");
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -32,12 +32,6 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/60">
       <div className="w-full max-w-md rounded-lg border border-[var(--border)] bg-[var(--surface)] p-5 flex flex-col gap-3">
         <h2 className="font-serif text-xl">Add channel</h2>
-        <input
-          value={channelId}
-          onChange={(e) => setChannelId(e.target.value)}
-          placeholder="Channel ID (e.g. UC...)"
-          className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
-        />
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -87,8 +81,8 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
             cancel
           </button>
           <button
-            disabled={!channelId || !title || !url}
-            onClick={() => onAdd({ channelId, title, url, category, tags: selectedTags })}
+            disabled={!title || !url}
+            onClick={() => onAdd({ channelId: deriveChannelId(url), title, url, category, tags: selectedTags })}
             className="text-xs font-mono text-[var(--accent)] px-3 py-1.5 border border-[var(--accent-line)] rounded disabled:opacity-40"
           >
             add
