@@ -212,7 +212,7 @@ export default function Home() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <aside className="flex-[4] min-w-0 border-r border-[var(--border-soft)] h-full">
+      <aside className="flex-[3] min-w-0 border-r border-[var(--border-soft)] h-full">
         <Sidebar
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
