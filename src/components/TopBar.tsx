@@ -18,14 +18,14 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
       <button
         onClick={onOpenSidebar}
         title="Open filters"
-        className="min-[1440px]:hidden shrink-0 rounded border border-[var(--border)] p-2.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
+        className="min-[1440px]:hidden shrink-0 h-10 flex items-center justify-center rounded border border-[var(--border)] px-2.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
       >
         <Menu size={16} strokeWidth={2} />
       </button>
-      <div className="flex items-center rounded border border-[var(--border)] overflow-hidden shrink-0 max-[679px]:flex-1">
+      <div className="flex items-center h-10 rounded border border-[var(--border)] overflow-hidden shrink-0 max-[679px]:flex-1">
         <button
           onClick={() => onViewModeChange("all")}
-          className={`px-3 py-2.5 text-sm font-mono max-[679px]:flex-1 ${
+          className={`h-full flex items-center justify-center px-3 text-sm font-mono max-[679px]:flex-1 ${
             viewMode === "all"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
@@ -35,7 +35,7 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
         </button>
         <button
           onClick={() => onViewModeChange("starred")}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-mono border-l border-[var(--border)] max-[679px]:flex-1 ${
+          className={`h-full flex items-center justify-center gap-1.5 px-3 text-sm font-mono border-l border-[var(--border)] max-[679px]:flex-1 ${
             viewMode === "starred"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
@@ -51,7 +51,7 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
       <button
         onClick={onAddChannel}
         title="Add channel"
-        className="flex items-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 py-2.5 shrink-0 max-[679px]:px-2.5"
+        className="h-10 flex items-center justify-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 shrink-0 max-[679px]:px-2.5"
       >
         <Plus size={14} strokeWidth={2.5} />
         <span className="hidden min-[680px]:inline">add channel</span>
