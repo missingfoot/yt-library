@@ -4,6 +4,7 @@ export interface ChannelView {
   url: string;
   category: string | undefined;
   tags: string[];
+  avatarUrl: string | undefined;
 }
 
 export interface FilterOptions {

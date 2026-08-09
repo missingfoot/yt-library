@@ -39,6 +39,7 @@ export default function Home() {
       url: c.url,
       category: c.category?.name,
       tags: c.tags.map((t) => t.name),
+      avatarUrl: c.avatarUrl,
     }));
   }, [data]);
 
@@ -95,6 +96,17 @@ export default function Home() {
   );
 
   const selectedChannel = channels.find((c) => c.id === selectedId) ?? null;
+
+  async function handleFetchAvatar(channelId: string, url: string) {
+    const res = await fetch(`/api/avatar?url=${encodeURIComponent(url)}`);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      alert(body.error ?? "Failed to fetch avatar");
+      return;
+    }
+    const { avatarUrl } = await res.json();
+    await db.transact(db.tx.channels[channelId].update({ avatarUrl }));
+  }
 
   function handleDelete(channelId: string) {
     if (!confirm("Delete this channel?")) return;
@@ -240,6 +252,7 @@ export default function Home() {
           tags={data?.tags ?? []}
           onSave={handleSaveEdit}
           onDelete={handleDelete}
+          onFetchAvatar={handleFetchAvatar}
           onClose={() => setSelectedId(null)}
         />
       </aside>

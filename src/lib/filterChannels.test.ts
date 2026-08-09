@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { filterChannels, type ChannelView } from "./filterChannels";
 
 const sample: ChannelView[] = [
-  { id: "1", title: "PewDiePie", url: "u1", category: "Gaming", tags: ["Let's Play", "Comedy"] },
-  { id: "2", title: "Astrum", url: "u2", category: "Science & Education", tags: ["Space/Astronomy"] },
-  { id: "3", title: "Arlo", url: "u3", category: "Gaming", tags: ["Lore/Analysis", "Commentary"] },
-  { id: "4", title: "decayingmidwest", url: "u4", category: undefined, tags: [] },
+  { id: "1", title: "PewDiePie", url: "u1", category: "Gaming", tags: ["Let's Play", "Comedy"], avatarUrl: undefined },
+  { id: "2", title: "Astrum", url: "u2", category: "Science & Education", tags: ["Space/Astronomy"], avatarUrl: undefined },
+  { id: "3", title: "Arlo", url: "u3", category: "Gaming", tags: ["Lore/Analysis", "Commentary"], avatarUrl: undefined },
+  { id: "4", title: "decayingmidwest", url: "u4", category: undefined, tags: [], avatarUrl: undefined },
 ];
 
 describe("filterChannels", () => {

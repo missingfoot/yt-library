@@ -21,14 +21,16 @@ interface DetailPanelProps {
   tags: TagOption[];
   onSave: (channelId: string, updates: { title: string; url: string; category: string | undefined; tags: string[] }) => void;
   onDelete: (channelId: string) => void;
+  onFetchAvatar: (channelId: string, url: string) => Promise<void>;
   onClose: () => void;
 }
 
-export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClose }: DetailPanelProps) {
+export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar, onClose }: DetailPanelProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [avatarLoading, setAvatarLoading] = useState(false);
 
   useEffect(() => {
     if (channel) {
@@ -51,6 +53,15 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
     setSelectedTags((prev) => (prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]));
   }
 
+  async function handleFetchAvatar() {
+    setAvatarLoading(true);
+    try {
+      await onFetchAvatar(channel!.id, channel!.url);
+    } finally {
+      setAvatarLoading(false);
+    }
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between px-5 py-[19px] border-b border-[var(--border-soft)] sticky top-0 z-10 bg-[var(--bg)] shrink-0">
@@ -61,6 +72,26 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+
+      <div className="flex items-center gap-3">
+        {channel.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={channel.avatarUrl}
+            alt=""
+            className="h-14 w-14 rounded-full object-cover shrink-0"
+          />
+        ) : (
+          <div className="h-14 w-14 rounded-full bg-[var(--surface-active)] shrink-0" />
+        )}
+        <button
+          onClick={handleFetchAvatar}
+          disabled={avatarLoading}
+          className="text-xs font-mono text-[var(--accent)] px-3 py-1.5 border border-[var(--accent-line)] rounded disabled:opacity-40"
+        >
+          {avatarLoading ? "fetching..." : channel.avatarUrl ? "refresh avatar" : "get avatar"}
+        </button>
+      </div>
 
       <label className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Title</span>
