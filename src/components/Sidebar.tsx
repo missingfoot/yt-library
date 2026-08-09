@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Delete } from "lucide-react";
+import { Search, Delete, X } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
+  onClose: () => void;
   categoryChips: ChipItem[];
   selectedCategories: Set<string>;
   onToggleCategory: (key: string) => void;
@@ -67,6 +68,7 @@ function ChipFilterInput({ value, onChange, placeholder }: { value: string; onCh
 }
 
 export function Sidebar({
+  onClose,
   categoryChips,
   selectedCategories,
   onToggleCategory,
@@ -123,8 +125,19 @@ export function Sidebar({
   }, [tagChips, tagFilter, tagSort]);
 
   return (
-    <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
-      <h1 className="font-serif text-2xl font-semibold">Filter Channel Library</h1>
+    <div className="flex flex-col h-full overflow-y-auto">
+      <div className="min-[1440px]:hidden sticky top-0 z-10 flex items-center justify-between bg-[var(--bg)] p-3 border-b border-[var(--border-soft)]">
+        <span className="font-serif text-lg font-semibold">Filter</span>
+        <button
+          onClick={onClose}
+          title="Close"
+          className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
+        >
+          <X size={16} strokeWidth={2} />
+        </button>
+      </div>
+      <div className="flex flex-col gap-6 p-5">
+      <h1 className="hidden min-[1440px]:block font-serif text-2xl font-semibold">Filter Channel Library</h1>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -205,6 +218,7 @@ export function Sidebar({
           onDelete={onDeleteTag}
           onMergeRequest={onMergeTagRequest}
         />
+      </div>
       </div>
     </div>
   );

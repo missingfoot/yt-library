@@ -1,9 +1,10 @@
-import { Plus, Star } from "lucide-react";
+import { Menu, Plus, Star } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 
 export type ViewMode = "all" | "starred";
 
 interface TopBarProps {
+  onOpenSidebar: () => void;
   search: string;
   onSearchChange: (value: string) => void;
   onAddChannel: () => void;
@@ -11,13 +12,20 @@ interface TopBarProps {
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-export function TopBar({ search, onSearchChange, onAddChannel, viewMode, onViewModeChange }: TopBarProps) {
+export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, viewMode, onViewModeChange }: TopBarProps) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-soft)] shrink-0">
-      <div className="flex items-center rounded border border-[var(--border)] overflow-hidden shrink-0">
+    <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-[var(--border-soft)] shrink-0">
+      <button
+        onClick={onOpenSidebar}
+        title="Open filters"
+        className="min-[1440px]:hidden shrink-0 rounded border border-[var(--border)] p-2.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
+      >
+        <Menu size={16} strokeWidth={2} />
+      </button>
+      <div className="flex items-center rounded border border-[var(--border)] overflow-hidden shrink-0 max-[679px]:flex-1">
         <button
           onClick={() => onViewModeChange("all")}
-          className={`px-3 py-2.5 text-sm font-mono ${
+          className={`px-3 py-2.5 text-sm font-mono max-[679px]:flex-1 ${
             viewMode === "all"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
@@ -27,7 +35,7 @@ export function TopBar({ search, onSearchChange, onAddChannel, viewMode, onViewM
         </button>
         <button
           onClick={() => onViewModeChange("starred")}
-          className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-mono border-l border-[var(--border)] ${
+          className={`flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-mono border-l border-[var(--border)] max-[679px]:flex-1 ${
             viewMode === "starred"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
@@ -37,15 +45,16 @@ export function TopBar({ search, onSearchChange, onAddChannel, viewMode, onViewM
           starred
         </button>
       </div>
-      <div className="flex-1">
+      <div className="order-last w-full min-[680px]:order-none min-[680px]:w-auto min-[680px]:flex-1">
         <SearchBar value={search} onChange={onSearchChange} />
       </div>
       <button
         onClick={onAddChannel}
-        className="flex items-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 py-2.5 shrink-0"
+        title="Add channel"
+        className="flex items-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 py-2.5 shrink-0 max-[679px]:px-2.5"
       >
         <Plus size={14} strokeWidth={2.5} />
-        add channel
+        <span className="hidden min-[680px]:inline">add channel</span>
       </button>
     </div>
   );

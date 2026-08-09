@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { resolveIcon } from "@/lib/categoryIcons";
 import type { ChannelView } from "@/lib/filterChannels";
@@ -10,6 +11,8 @@ interface ChannelRowProps {
 }
 
 export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: ChannelRowProps) {
+  const [avatarBroken, setAvatarBroken] = useState(false);
+  useEffect(() => setAvatarBroken(false), [channel.avatarUrl]);
   const categoryLabel = channel.category ?? "Uncategorized";
   const Icon = resolveIcon(channel.categoryIcon);
   const iconColor = channel.categoryColor || "#5C6274";
@@ -30,7 +33,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onSelect();
       }}
-      className={`group w-full flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-soft)] text-left transition-colors cursor-pointer
+      className={`group w-max min-w-full flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-soft)] text-left transition-colors cursor-pointer
         ${isSelected ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--surface-hover)]"}`}
     >
       <button
@@ -49,22 +52,30 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
         />
       </button>
       <Icon size={24} strokeWidth={2} className="shrink-0 ml-3" color={iconColor} />
-      {channel.avatarUrl ? (
+      {channel.avatarUrl && !avatarBroken ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0 ml-3" />
+        <img
+          src={channel.avatarUrl}
+          alt=""
+          className="h-6 w-6 rounded object-cover shrink-0 ml-3"
+          onError={() => setAvatarBroken(true)}
+        />
       ) : (
         <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-3" />
       )}
-      <span className={`text-sm font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 240, maxWidth: 340 }}>
+      <span
+        className={`shrink-0 whitespace-nowrap text-sm font-medium ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`}
+        style={{ minWidth: 240 }}
+      >
         {channel.title}
       </span>
-      <div className="flex items-center gap-6 flex-1 min-w-0">
-        <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 truncate text-left">{categoryLabel}</span>
-        <span className="flex flex-wrap gap-1.5 flex-1 min-w-0 text-left">
+      <div className="flex items-center gap-6 shrink-0">
+        <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 whitespace-nowrap text-left">{categoryLabel}</span>
+        <span className="flex flex-nowrap gap-1.5 shrink-0 text-left">
           {channel.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px] text-[var(--text-dim)] shrink-0"
+              className="rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px] text-[var(--text-dim)] shrink-0 whitespace-nowrap"
             >
               {tag}
             </span>

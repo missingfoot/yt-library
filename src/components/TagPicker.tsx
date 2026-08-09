@@ -3,14 +3,18 @@
 import { useMemo, useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { ChipContextMenu } from "@/components/ChipContextMenu";
+import type { ChipItem } from "@/components/FilterChips";
 
 interface TagOption {
   id: string;
   name: string;
 }
 
+type SortMode = "count" | "alpha";
+
 interface TagPickerProps {
   allTags: TagOption[];
+  tagCounts?: ChipItem[];
   selectedTags: string[];
   onToggle: (name: string) => void;
   onRenameTag?: (id: string, newName: string) => void;
@@ -18,13 +22,29 @@ interface TagPickerProps {
   onMergeTagRequest?: (id: string) => void;
 }
 
-export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDeleteTag, onMergeTagRequest }: TagPickerProps) {
+export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRenameTag, onDeleteTag, onMergeTagRequest }: TagPickerProps) {
   const [filter, setFilter] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
+  const [sort, setSortState] = useState<SortMode>(
+    () => (typeof window !== "undefined" && window.localStorage.getItem("editTagSort") === "alpha" ? "alpha" : "count")
+  );
+
+  function setSort(update: (prev: SortMode) => SortMode) {
+    setSortState((prev) => {
+      const next = update(prev);
+      window.localStorage.setItem("editTagSort", next);
+      return next;
+    });
+  }
 
   const realTagIds = useMemo(() => new Set(allTags.map((t) => t.id)), [allTags]);
   const canEdit = !!(onRenameTag || onDeleteTag);
+  const countByName = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const c of tagCounts ?? []) m.set(c.label, c.count);
+    return m;
+  }, [tagCounts]);
 
   const combined = useMemo(() => {
     const seen = new Map<string, string>();
@@ -33,11 +53,21 @@ export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDele
     return [...seen.entries()].map(([name, id]) => ({ id, name }));
   }, [allTags, selectedTags]);
 
+  const sorted = useMemo(() => {
+    const list = [...combined];
+    if (sort === "alpha") {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      list.sort((a, b) => (countByName.get(b.name) ?? 0) - (countByName.get(a.name) ?? 0));
+    }
+    return list;
+  }, [combined, sort, countByName]);
+
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    if (!q) return combined;
-    return combined.filter((t) => t.name.toLowerCase().includes(q));
-  }, [combined, filter]);
+    if (!q) return sorted;
+    return sorted.filter((t) => t.name.toLowerCase().includes(q));
+  }, [sorted, filter]);
 
   const trimmedFilter = filter.trim();
   const exactMatch = combined.some((t) => t.name.toLowerCase() === trimmedFilter.toLowerCase());
@@ -60,6 +90,15 @@ export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDele
 
   return (
     <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>
+        <button
+          onClick={() => setSort((m) => (m === "count" ? "alpha" : "count"))}
+          className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+        >
+          sort: {sort}
+        </button>
+      </div>
       <div className="relative">
         <Search size={12} strokeWidth={2} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] pointer-events-none" />
         <input

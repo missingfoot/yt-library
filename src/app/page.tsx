@@ -13,10 +13,11 @@ import { AddChannelModal } from "@/components/AddChannelModal";
 import { MergeTagsModal } from "@/components/MergeTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
 import { id } from "@instantdb/react";
+import { useDragScroll } from "@/lib/useDragScroll";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
-    channels: { category: {}, tags: {} },
+    channels: { category: {}, tags: {}, avatarFile: {} },
     categories: {},
     tags: { channels: {} },
   });
@@ -30,6 +31,8 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [mergeSourceTagId, setMergeSourceTagId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dragScroll = useDragScroll<HTMLDivElement>();
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -39,7 +42,7 @@ export default function Home() {
       url: c.url,
       category: c.category?.name,
       tags: c.tags.map((t) => t.name),
-      avatarUrl: c.avatarUrl,
+      avatarUrl: c.avatarFile?.url,
       isFavorite: c.isFavorite ?? false,
       categoryColor: c.category?.color,
       categoryIcon: c.category?.icon,
@@ -153,14 +156,26 @@ export default function Home() {
   }
 
   async function handleFetchAvatar(channelId: string, url: string) {
-    const res = await fetch(`/api/avatar?url=${encodeURIComponent(url)}`);
+    const res = await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}&url=${encodeURIComponent(url)}`);
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       alert(body.error ?? "Failed to fetch avatar");
-      return;
     }
-    const { avatarUrl } = await res.json();
-    await db.transact(db.tx.channels[channelId].update({ avatarUrl }));
+  }
+
+  async function handleClearAvatar(channelId: string) {
+    await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}`, { method: "DELETE" });
+  }
+
+  async function handleFetchChannelTags(url: string): Promise<string[]> {
+    const res = await fetch(`/api/channel-tags?url=${encodeURIComponent(url)}`);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      if (res.status !== 404) alert(body.error ?? "Failed to fetch channel tags");
+      return [];
+    }
+    const { tags: fetchedTags } = await res.json();
+    return fetchedTags;
   }
 
   function handleDelete(channelId: string) {
@@ -266,7 +281,15 @@ export default function Home() {
   }
 
   function handleRenameTag(tagId: string, newName: string) {
-    db.transact(db.tx.tags[tagId].update({ name: newName }));
+    const trimmedName = newName.trim();
+    const existingMatch = data?.tags.find(
+      (t) => t.name.toLowerCase() === trimmedName.toLowerCase() && t.id !== tagId,
+    );
+    if (existingMatch) {
+      handleMergeTags([tagId, existingMatch.id], trimmedName);
+      return;
+    }
+    db.transact(db.tx.tags[tagId].update({ name: trimmedName }));
   }
 
   function handleDeleteTag(tagId: string) {
@@ -275,10 +298,22 @@ export default function Home() {
 
   async function handleMergeTags(tagIds: string[], finalName: string) {
     if (tagIds.length < 2 || !finalName.trim()) return;
-    const [survivorId, ...obsoleteIds] = tagIds;
+    const trimmedName = finalName.trim();
+
+    const existingMatch = data?.tags.find(
+      (t) => t.name.toLowerCase() === trimmedName.toLowerCase() && !tagIds.includes(t.id),
+    );
+
+    const survivorId = existingMatch?.id ?? tagIds[0];
+    const obsoleteIds = existingMatch
+      ? tagIds
+      : tagIds.slice(1);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const txSteps: any[] = [db.tx.tags[survivorId].update({ name: finalName.trim() })];
+    const txSteps: any[] = [];
+    if (!existingMatch) {
+      txSteps.push(db.tx.tags[survivorId].update({ name: trimmedName }));
+    }
 
     for (const obsoleteId of obsoleteIds) {
       const tagRecord = data?.tags.find((t) => t.id === obsoleteId);
@@ -298,9 +333,20 @@ export default function Home() {
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
   return (
-    <div className="h-screen flex overflow-hidden">
-      <aside className="flex-[3] min-w-0 border-r border-[var(--border-soft)] h-full">
+    <div className="h-screen flex overflow-hidden relative">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 min-[1440px]:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 max-[479px]:w-full min-[480px]:max-[619px]:w-3/4 min-[620px]:max-[959px]:w-2/3 min-[960px]:max-[1439px]:w-1/2 border-r border-[var(--border-soft)] bg-[var(--bg)] h-full transition-transform duration-200
+          min-[1440px]:static min-[1440px]:z-auto min-[1440px]:w-auto min-[1440px]:flex-[3] min-[1440px]:translate-x-0 min-[1440px]:transition-none min-[1440px]:min-w-0
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
         <Sidebar
+          onClose={() => setSidebarOpen(false)}
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
           onToggleCategory={toggleCategory}
@@ -324,6 +370,7 @@ export default function Home() {
       <main className="flex-[7] min-w-0 h-full flex flex-col">
         <div className="sticky top-0 z-10 bg-[var(--bg)]">
           <TopBar
+            onOpenSidebar={() => setSidebarOpen(true)}
             search={search}
             onSearchChange={handleSearchChange}
             onAddChannel={() => setShowAddModal(true)}
@@ -334,7 +381,15 @@ export default function Home() {
             {visible.length} channel{visible.length === 1 ? "" : "s"}
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div
+          ref={dragScroll.ref}
+          onMouseDown={dragScroll.onMouseDown}
+          onMouseMove={dragScroll.onMouseMove}
+          onMouseUp={dragScroll.onMouseUp}
+          onMouseLeave={dragScroll.onMouseLeave}
+          onClickCapture={dragScroll.onClickCapture}
+          className="flex-1 overflow-y-auto overflow-x-auto select-none cursor-grab active:cursor-grabbing"
+        >
           {visible.map((channel) => (
             <ChannelRow
               key={channel.id}
@@ -347,14 +402,28 @@ export default function Home() {
         </div>
       </main>
 
-      <aside className="flex-[3] min-w-0 border-l border-[var(--border-soft)] h-full">
+      {selectedChannel && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 min-[1280px]:hidden"
+          onClick={() => setSelectedId(null)}
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 right-0 z-40 max-[479px]:w-full min-[480px]:max-[619px]:w-3/4 min-[620px]:max-[959px]:w-2/3 min-[960px]:max-[1279px]:w-1/2 border-l border-[var(--border-soft)] bg-[var(--bg)] h-full transition-transform duration-200
+          min-[1280px]:static min-[1280px]:z-auto min-[1280px]:w-auto min-[1280px]:flex-[3] min-[1280px]:translate-x-0 min-[1280px]:transition-none min-[1280px]:min-w-0
+          ${selectedChannel ? "translate-x-0" : "translate-x-full"}`}
+      >
         <DetailPanel
+          onClose={() => setSelectedId(null)}
           channel={selectedChannel}
           categories={data?.categories ?? []}
           tags={data?.tags ?? []}
+          tagCounts={tagChips}
           onSave={handleSaveEdit}
           onDelete={handleDelete}
           onFetchAvatar={handleFetchAvatar}
+          onClearAvatar={handleClearAvatar}
+          onFetchChannelTags={handleFetchChannelTags}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
           onMergeTagRequest={setMergeSourceTagId}
