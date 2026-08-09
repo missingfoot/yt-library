@@ -49,10 +49,10 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       ) : (
         <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-3" />
       )}
-      <span className={`text-sm font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
+      <span className={`text-sm font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 240, maxWidth: 340 }}>
         {channel.title}
       </span>
-      <div className="flex items-center gap-6 ml-auto shrink-0">
+      <div className="flex items-center gap-6 shrink-0">
         <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 truncate text-left">{categoryLabel}</span>
         <span className="flex flex-wrap gap-1.5 w-64 shrink-0 text-left">
           {channel.tags.map((tag) => (
