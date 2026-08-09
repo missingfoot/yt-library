@@ -18,6 +18,10 @@ const _schema = i.schema({
     tags: i.entity({
       name: i.string().unique().indexed(),
     }),
+    $files: i.entity({
+      path: i.string().unique().indexed(),
+      url: i.string(),
+    }),
   },
   links: {
     channelCategory: {
@@ -27,6 +31,10 @@ const _schema = i.schema({
     channelTags: {
       forward: { on: "channels", has: "many", label: "tags" },
       reverse: { on: "tags", has: "many", label: "channels" },
+    },
+    channelAvatar: {
+      forward: { on: "channels", has: "one", label: "avatarFile" },
+      reverse: { on: "$files", has: "one", label: "channel" },
     },
   },
 });
