@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 
 interface TagOption {
   id: string;
@@ -71,7 +71,6 @@ export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
                 }`}
             >
               {t.name}
-              {isSelected && <X size={12} strokeWidth={2} />}
             </button>
           );
         })}
