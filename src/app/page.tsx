@@ -6,7 +6,7 @@ import { filterChannels, type ChannelView } from "@/lib/filterChannels";
 import { catColor } from "@/lib/categoryColors";
 import { catIcon } from "@/lib/categoryIcons";
 import { Sidebar } from "@/components/Sidebar";
-import { TopBar } from "@/components/TopBar";
+import { TopBar, type ViewMode } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
 import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
@@ -23,6 +23,7 @@ export default function Home() {
   });
 
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
@@ -84,17 +85,16 @@ export default function Home() {
     });
   }
 
-  const visible = useMemo(
-    () =>
-      filterChannels(channels, {
-        search,
-        categories: selectedCategories,
-        tags: selectedTags,
-        tagMode,
-        sort: "name",
-      }),
-    [channels, search, selectedCategories, selectedTags, tagMode]
-  );
+  const visible = useMemo(() => {
+    const base = viewMode === "starred" ? channels.filter((c) => c.isFavorite) : channels;
+    return filterChannels(base, {
+      search,
+      categories: selectedCategories,
+      tags: selectedTags,
+      tagMode,
+      sort: "name",
+    });
+  }, [channels, search, selectedCategories, selectedTags, tagMode, viewMode]);
 
   const selectedChannel = channels.find((c) => c.id === selectedId) ?? null;
 
@@ -233,6 +233,8 @@ export default function Home() {
             search={search}
             onSearchChange={setSearch}
             onAddChannel={() => setShowAddModal(true)}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
           />
           <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)]">
             {visible.length} channel{visible.length === 1 ? "" : "s"}
