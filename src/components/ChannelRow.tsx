@@ -13,6 +13,7 @@ interface ChannelRowProps {
 export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: ChannelRowProps) {
   const categoryLabel = channel.category ?? "Uncategorized";
   const Icon = catIcon(channel.category);
+  const videosUrl = `${channel.url.replace(/\/+$/, "")}/videos`;
 
   return (
     <div
@@ -40,12 +41,12 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
           fill={channel.isFavorite ? "currentColor" : "none"}
         />
       </button>
-      <Icon size={24} strokeWidth={2} className="shrink-0" color={catColor(channel.category)} />
+      <Icon size={24} strokeWidth={2} className="shrink-0 ml-3" color={catColor(channel.category)} />
       {channel.avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0 ml-2" />
+        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0 ml-3" />
       ) : (
-        <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-2" />
+        <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-3" />
       )}
       <span className={`font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
         {channel.title}
@@ -64,7 +65,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
         </span>
       </div>
       <a
-        href={channel.url}
+        href={videosUrl}
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
