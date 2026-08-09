@@ -19,6 +19,7 @@ interface SidebarProps {
   onDeleteCategory: (id: string) => void;
   onRenameTag: (id: string, newName: string) => void;
   onDeleteTag: (id: string) => void;
+  onMergeTagRequest: (id: string) => void;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -62,6 +63,7 @@ export function Sidebar({
   onDeleteCategory,
   onRenameTag,
   onDeleteTag,
+  onMergeTagRequest,
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
@@ -129,6 +131,7 @@ export function Sidebar({
           onToggle={onToggleTag}
           onRename={onRenameTag}
           onDelete={onDeleteTag}
+          onMergeRequest={onMergeTagRequest}
         />
       </div>
     </div>

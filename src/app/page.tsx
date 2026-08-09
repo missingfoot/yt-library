@@ -12,6 +12,7 @@ import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
 import { ManageCategoriesModal } from "@/components/ManageCategoriesModal";
 import { ManageTagsModal } from "@/components/ManageTagsModal";
+import { MergeTagsModal } from "@/components/MergeTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
 import { id } from "@instantdb/react";
 
@@ -19,7 +20,7 @@ export default function Home() {
   const { isLoading, error, data } = db.useQuery({
     channels: { category: {}, tags: {} },
     categories: {},
-    tags: {},
+    tags: { channels: {} },
   });
 
   const [search, setSearch] = useState("");
@@ -31,6 +32,7 @@ export default function Home() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showManageCategoriesModal, setShowManageCategoriesModal] = useState(false);
   const [showManageTagsModal, setShowManageTagsModal] = useState(false);
+  const [mergeSourceTagId, setMergeSourceTagId] = useState<string | null>(null);
 
   const channels: ChannelView[] = useMemo(() => {
     if (!data) return [];
@@ -208,6 +210,27 @@ export default function Home() {
     db.transact(db.tx.tags[tagId].delete());
   }
 
+  async function handleMergeTags(tagIds: string[], finalName: string) {
+    if (tagIds.length < 2 || !finalName.trim()) return;
+    const [survivorId, ...obsoleteIds] = tagIds;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const txSteps: any[] = [db.tx.tags[survivorId].update({ name: finalName.trim() })];
+
+    for (const obsoleteId of obsoleteIds) {
+      const tagRecord = data?.tags.find((t) => t.id === obsoleteId);
+      for (const ch of tagRecord?.channels ?? []) {
+        txSteps.push(db.tx.channels[ch.id].link({ tags: [survivorId] }));
+      }
+    }
+    for (const obsoleteId of obsoleteIds) {
+      txSteps.push(db.tx.tags[obsoleteId].delete());
+    }
+
+    await db.transact(txSteps);
+    setMergeSourceTagId(null);
+  }
+
   if (isLoading) return <div className="p-10 text-[var(--text-dim)]">Loading...</div>;
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
@@ -229,6 +252,7 @@ export default function Home() {
           onDeleteCategory={handleDeleteCategory}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
+          onMergeTagRequest={setMergeSourceTagId}
         />
       </aside>
 
@@ -268,6 +292,7 @@ export default function Home() {
           onFetchAvatar={handleFetchAvatar}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
+          onMergeTagRequest={setMergeSourceTagId}
         />
       </aside>
 
@@ -279,6 +304,7 @@ export default function Home() {
           onClose={() => setShowAddModal(false)}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
+          onMergeTagRequest={setMergeSourceTagId}
         />
       )}
 
@@ -297,6 +323,15 @@ export default function Home() {
           onRename={handleRenameTag}
           onDelete={handleDeleteTag}
           onClose={() => setShowManageTagsModal(false)}
+        />
+      )}
+
+      {mergeSourceTagId && (
+        <MergeTagsModal
+          sourceTagId={mergeSourceTagId}
+          allTags={data?.tags ?? []}
+          onMerge={handleMergeTags}
+          onClose={() => setMergeSourceTagId(null)}
         />
       )}
     </div>

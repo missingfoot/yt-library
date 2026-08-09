@@ -7,10 +7,11 @@ interface ChipContextMenuProps {
   y: number;
   onRename: () => void;
   onDelete: () => void;
+  onMerge?: () => void;
   onClose: () => void;
 }
 
-export function ChipContextMenu({ x, y, onRename, onDelete, onClose }: ChipContextMenuProps) {
+export function ChipContextMenu({ x, y, onRename, onDelete, onMerge, onClose }: ChipContextMenuProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +41,14 @@ export function ChipContextMenu({ x, y, onRename, onDelete, onClose }: ChipConte
       >
         rename
       </button>
+      {onMerge && (
+        <button
+          onClick={onMerge}
+          className="px-3 py-1.5 text-xs font-mono text-left text-[var(--text)] hover:bg-[var(--surface-hover)]"
+        >
+          merge
+        </button>
+      )}
       <button
         onClick={onDelete}
         className="px-3 py-1.5 text-xs font-mono text-left text-red-400 hover:bg-[var(--surface-hover)]"

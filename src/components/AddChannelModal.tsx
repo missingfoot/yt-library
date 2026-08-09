@@ -21,9 +21,10 @@ interface AddChannelModalProps {
   onClose: () => void;
   onRenameTag: (id: string, newName: string) => void;
   onDeleteTag: (id: string) => void;
+  onMergeTagRequest: (id: string) => void;
 }
 
-export function AddChannelModal({ categories, tags, onAdd, onClose, onRenameTag, onDeleteTag }: AddChannelModalProps) {
+export function AddChannelModal({ categories, tags, onAdd, onClose, onRenameTag, onDeleteTag, onMergeTagRequest }: AddChannelModalProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -56,6 +57,7 @@ export function AddChannelModal({ categories, tags, onAdd, onClose, onRenameTag,
           onToggle={toggleTag}
           onRenameTag={onRenameTag}
           onDeleteTag={onDeleteTag}
+          onMergeTagRequest={onMergeTagRequest}
         />
 
         <div className="flex gap-2 justify-end pt-2">

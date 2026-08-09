@@ -15,9 +15,10 @@ interface TagPickerProps {
   onToggle: (name: string) => void;
   onRenameTag?: (id: string, newName: string) => void;
   onDeleteTag?: (id: string) => void;
+  onMergeTagRequest?: (id: string) => void;
 }
 
-export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDeleteTag }: TagPickerProps) {
+export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDeleteTag, onMergeTagRequest }: TagPickerProps) {
   const [filter, setFilter] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null);
@@ -141,6 +142,14 @@ export function TagPicker({ allTags, selectedTags, onToggle, onRenameTag, onDele
             setEditingId(menu.id);
             setMenu(null);
           }}
+          onMerge={
+            onMergeTagRequest
+              ? () => {
+                  onMergeTagRequest(menu.id);
+                  setMenu(null);
+                }
+              : undefined
+          }
           onDelete={() => {
             const t = combined.find((c) => c.id === menu.id);
             if (t && onDeleteTag && confirm(`Delete "${t.name}"?`)) onDeleteTag(menu.id);

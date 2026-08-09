@@ -24,9 +24,10 @@ interface DetailPanelProps {
   onFetchAvatar: (channelId: string, url: string) => Promise<void>;
   onRenameTag: (id: string, newName: string) => void;
   onDeleteTag: (id: string) => void;
+  onMergeTagRequest: (id: string) => void;
 }
 
-export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar, onRenameTag, onDeleteTag }: DetailPanelProps) {
+export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFetchAvatar, onRenameTag, onDeleteTag, onMergeTagRequest }: DetailPanelProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -135,6 +136,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
           onToggle={toggleTag}
           onRenameTag={onRenameTag}
           onDeleteTag={onDeleteTag}
+          onMergeTagRequest={onMergeTagRequest}
         />
       </div>
 

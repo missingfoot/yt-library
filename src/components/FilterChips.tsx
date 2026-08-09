@@ -19,9 +19,10 @@ interface FilterChipsProps {
   onToggle: (key: string) => void;
   onRename?: (entityId: string, newName: string) => void;
   onDelete?: (entityId: string) => void;
+  onMergeRequest?: (entityId: string) => void;
 }
 
-export function FilterChips({ items, selected, onToggle, onRename, onDelete }: FilterChipsProps) {
+export function FilterChips({ items, selected, onToggle, onRename, onDelete, onMergeRequest }: FilterChipsProps) {
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [menu, setMenu] = useState<{ key: string; x: number; y: number } | null>(null);
 
@@ -91,6 +92,15 @@ export function FilterChips({ items, selected, onToggle, onRename, onDelete }: F
             setEditingKey(menu.key);
             setMenu(null);
           }}
+          onMerge={
+            onMergeRequest
+              ? () => {
+                  const item = items.find((i) => i.key === menu.key);
+                  if (item?.entityId) onMergeRequest(item.entityId);
+                  setMenu(null);
+                }
+              : undefined
+          }
           onDelete={() => {
             const item = items.find((i) => i.key === menu.key);
             if (item?.entityId && onDelete && confirm(`Delete "${item.label}"?`)) {
