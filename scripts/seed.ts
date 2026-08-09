@@ -1,10 +1,7 @@
-import { config } from "dotenv";
 import { init, id, tx } from "@instantdb/admin";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import schema from "../instant.schema";
-
-config({ path: join(__dirname, "..", ".env.local"), quiet: true });
 
 interface SourceChannel {
   id: string;
