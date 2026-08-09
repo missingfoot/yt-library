@@ -21,6 +21,12 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       tabIndex={0}
       onClick={onSelect}
       onDoubleClick={() => window.open(videosUrl, "_blank", "noopener,noreferrer")}
+      onAuxClick={(e) => {
+        if (e.button === 1) {
+          e.preventDefault();
+          window.open(videosUrl, "_blank", "noopener,noreferrer");
+        }
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onSelect();
       }}
