@@ -48,8 +48,21 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
     );
   }
 
+  function persist(overrides: Partial<{ title: string; url: string; category: string | undefined; tags: string[] }>) {
+    onSave(channel!.id, { title, url, category, tags: selectedTags, ...overrides });
+  }
+
+  function handleCategoryChange(newCategory: string | undefined) {
+    setCategory(newCategory);
+    persist({ category: newCategory });
+  }
+
   function toggleTag(name: string) {
-    setSelectedTags((prev) => (prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]));
+    const newTags = selectedTags.includes(name)
+      ? selectedTags.filter((x) => x !== name)
+      : [...selectedTags, name];
+    setSelectedTags(newTags);
+    persist({ tags: newTags });
   }
 
   async function handleFetchAvatar() {
@@ -62,9 +75,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
-
+    <div className="h-full overflow-y-auto p-5 flex flex-col gap-4">
       <button
         onClick={handleFetchAvatar}
         disabled={avatarLoading}
@@ -94,6 +105,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onBlur={(e) => persist({ title: e.target.value })}
           className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
         />
       </label>
@@ -103,35 +115,27 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          onBlur={(e) => persist({ url: e.target.value })}
           className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
         />
       </label>
 
       <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Category</span>
-        <CategorySelect value={category} categories={categories} onChange={setCategory} />
+        <CategorySelect value={category} categories={categories} onChange={handleCategoryChange} />
       </div>
 
       <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>
         <TagPicker allTags={tags} selectedTags={selectedTags} onToggle={toggleTag} />
       </div>
-      </div>
 
-      <div className="flex gap-2 justify-between px-5 py-4 border-t border-[var(--border-soft)] sticky bottom-0 z-10 bg-[var(--bg)] shrink-0">
-        <button
-          onClick={() => onDelete(channel.id)}
-          className="text-xs font-mono text-[var(--text-faint)] hover:text-red-400 px-3 py-1.5"
-        >
-          delete channel
-        </button>
-        <button
-          onClick={() => onSave(channel.id, { title, url, category, tags: selectedTags })}
-          className="text-xs font-mono text-[var(--accent)] px-3 py-1.5 border border-[var(--accent-line)] rounded"
-        >
-          save
-        </button>
-      </div>
+      <button
+        onClick={() => onDelete(channel.id)}
+        className="self-start text-xs font-mono text-[var(--text-faint)] hover:text-red-400 px-3 py-1.5 mt-2"
+      >
+        delete channel
+      </button>
     </div>
   );
 }
