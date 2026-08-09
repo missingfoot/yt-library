@@ -16,6 +16,8 @@ import { AuthModal } from "@/components/AuthModal";
 import { id } from "@instantdb/react";
 import { useDragScroll } from "@/lib/useDragScroll";
 
+const OWNER_EMAIL = "ytdb@jamessparkes.com";
+
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({
     channels: { category: {}, tags: {}, avatarFile: {} },
@@ -24,10 +26,15 @@ export default function Home() {
   });
   const { user } = db.useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
+  const isOwner = user?.email === OWNER_EMAIL;
 
   function requireAuth(): boolean {
     if (!user) {
       setShowSignIn(true);
+      return false;
+    }
+    if (!isOwner) {
+      alert(`Signed in as ${user.email}, but only ${OWNER_EMAIL} can make changes.`);
       return false;
     }
     return true;
