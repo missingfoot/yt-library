@@ -25,7 +25,7 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
       <div className="flex items-center h-10 rounded border border-[var(--border)] overflow-hidden shrink-0 max-[679px]:flex-1">
         <button
           onClick={() => onViewModeChange("all")}
-          className={`h-full flex items-center justify-center px-3 text-sm font-mono max-[679px]:flex-1 ${
+          className={`h-full flex items-center justify-center px-3 text-sm leading-4 font-mono max-[679px]:flex-1 ${
             viewMode === "all"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
@@ -35,13 +35,13 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
         </button>
         <button
           onClick={() => onViewModeChange("starred")}
-          className={`h-full flex items-center justify-center gap-1.5 px-3 text-sm font-mono border-l border-[var(--border)] max-[679px]:flex-1 ${
+          className={`h-full flex items-center justify-center gap-1.5 px-3 text-sm leading-4 font-mono border-l border-[var(--border)] max-[679px]:flex-1 ${
             viewMode === "starred"
               ? "bg-[var(--accent-soft)] text-[var(--accent)]"
               : "bg-[var(--surface)] text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
           }`}
         >
-          <Star size={13} strokeWidth={2} fill={viewMode === "starred" ? "currentColor" : "none"} />
+          <Star size={16} strokeWidth={2} fill={viewMode === "starred" ? "currentColor" : "none"} />
           starred
         </button>
       </div>
@@ -51,9 +51,9 @@ export function TopBar({ onOpenSidebar, search, onSearchChange, onAddChannel, vi
       <button
         onClick={onAddChannel}
         title="Add channel"
-        className="h-10 flex items-center justify-center gap-1.5 text-sm font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 shrink-0 max-[679px]:px-2.5"
+        className="h-10 flex items-center justify-center gap-1.5 text-sm leading-4 font-mono text-[var(--accent)] border border-[var(--accent-line)] rounded px-4 shrink-0 max-[679px]:px-2.5"
       >
-        <Plus size={14} strokeWidth={2.5} />
+        <Plus size={16} strokeWidth={2.5} />
         <span className="hidden min-[680px]:inline">add channel</span>
       </button>
     </div>
