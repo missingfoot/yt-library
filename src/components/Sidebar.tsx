@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Delete } from "lucide-react";
+import { Search, Delete, ArrowDownAZ, ArrowDown01 } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
@@ -22,6 +22,34 @@ interface SidebarProps {
   onRenameTag: (id: string, newName: string) => void;
   onDeleteTag: (id: string) => void;
   onMergeTagRequest: (id: string) => void;
+}
+
+type SortMode = "count" | "alpha";
+
+function sortChips(chips: ChipItem[], mode: SortMode): ChipItem[] {
+  const sorted = [...chips];
+  if (mode === "alpha") {
+    sorted.sort((a, b) => a.label.localeCompare(b.label));
+  } else {
+    sorted.sort((a, b) => b.count - a.count);
+  }
+  return sorted;
+}
+
+function SortToggle({ mode, onToggle }: { mode: SortMode; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      title={mode === "count" ? "Sorted by count" : "Sorted alphabetically"}
+      className="text-[var(--accent)]"
+    >
+      {mode === "count" ? (
+        <ArrowDown01 size={13} strokeWidth={2} />
+      ) : (
+        <ArrowDownAZ size={13} strokeWidth={2} />
+      )}
+    </button>
+  );
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -71,18 +99,20 @@ export function Sidebar({
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
+  const [categorySort, setCategorySort] = useState<SortMode>("count");
+  const [tagSort, setTagSort] = useState<SortMode>("count");
 
   const filteredCategoryChips = useMemo(() => {
     const q = categoryFilter.trim().toLowerCase();
-    if (!q) return categoryChips;
-    return categoryChips.filter((c) => c.label.toLowerCase().includes(q));
-  }, [categoryChips, categoryFilter]);
+    const base = q ? categoryChips.filter((c) => c.label.toLowerCase().includes(q)) : categoryChips;
+    return sortChips(base, categorySort);
+  }, [categoryChips, categoryFilter, categorySort]);
 
   const filteredTagChips = useMemo(() => {
     const q = tagFilter.trim().toLowerCase();
-    if (!q) return tagChips;
-    return tagChips.filter((t) => t.label.toLowerCase().includes(q));
-  }, [tagChips, tagFilter]);
+    const base = q ? tagChips.filter((t) => t.label.toLowerCase().includes(q)) : tagChips;
+    return sortChips(base, tagSort);
+  }, [tagChips, tagFilter, tagSort]);
 
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
@@ -92,6 +122,7 @@ export function Sidebar({
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
           <div className="flex items-center gap-3">
+            <SortToggle mode={categorySort} onToggle={() => setCategorySort((m) => (m === "count" ? "alpha" : "count"))} />
             <button
               onClick={onToggleCategoryMode}
               className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
@@ -122,6 +153,7 @@ export function Sidebar({
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</h3>
           <div className="flex items-center gap-3">
+            <SortToggle mode={tagSort} onToggle={() => setTagSort((m) => (m === "count" ? "alpha" : "count"))} />
             <button
               onClick={onToggleTagMode}
               className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
