@@ -37,7 +37,7 @@ function sortChips(chips: ChipItem[], mode: SortMode): ChipItem[] {
 }
 
 function HeaderPipe() {
-  return <span className="text-[var(--border)]">|</span>;
+  return <span className="inline-block w-px h-2.5 bg-[var(--border)]" />;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
