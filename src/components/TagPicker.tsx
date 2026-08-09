@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 interface TagOption {
   id: string;
@@ -30,13 +30,21 @@ export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
     return combined.filter((t) => t.name.toLowerCase().includes(q));
   }, [combined, filter]);
 
+  const trimmedFilter = filter.trim();
+  const exactMatch = combined.some((t) => t.name.toLowerCase() === trimmedFilter.toLowerCase());
+
+  function addNewTag() {
+    if (!trimmedFilter) return;
+    onToggle(trimmedFilter);
+    setFilter("");
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
-      const trimmed = filter.trim();
-      if (!trimmed) return;
-      const existing = combined.find((t) => t.name.toLowerCase() === trimmed.toLowerCase());
-      onToggle(existing ? existing.name : trimmed);
+      if (!trimmedFilter) return;
+      const existing = combined.find((t) => t.name.toLowerCase() === trimmedFilter.toLowerCase());
+      onToggle(existing ? existing.name : trimmedFilter);
       setFilter("");
     }
   }
@@ -56,6 +64,16 @@ export function TagPicker({ allTags, selectedTags, onToggle }: TagPickerProps) {
                      focus:outline-none focus:border-[var(--accent-line)]"
         />
       </div>
+      {trimmedFilter && !exactMatch && (
+        <button
+          type="button"
+          onClick={addNewTag}
+          className="flex items-center gap-1.5 self-start rounded-full border border-[var(--accent-line)] bg-[var(--accent-soft)] px-3 py-1.5 text-xs font-medium text-[var(--accent)]"
+        >
+          <Plus size={12} strokeWidth={2.5} />
+          add &quot;{trimmedFilter}&quot;
+        </button>
+      )}
       <div className="flex flex-wrap gap-2">
         {filtered.map((t) => {
           const isSelected = selectedTags.includes(t.name);
