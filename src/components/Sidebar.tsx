@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, Delete } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
@@ -87,8 +87,31 @@ export function Sidebar({
 }: SidebarProps) {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
-  const [categorySort, setCategorySort] = useState<SortMode>("count");
-  const [tagSort, setTagSort] = useState<SortMode>("count");
+  const [categorySort, setCategorySortState] = useState<SortMode>("count");
+  const [tagSort, setTagSortState] = useState<SortMode>("count");
+
+  useEffect(() => {
+    const storedCategory = window.localStorage.getItem("categorySort");
+    if (storedCategory === "alpha") setCategorySortState("alpha");
+    const storedTag = window.localStorage.getItem("tagSort");
+    if (storedTag === "alpha") setTagSortState("alpha");
+  }, []);
+
+  function setCategorySort(update: (prev: SortMode) => SortMode) {
+    setCategorySortState((prev) => {
+      const next = update(prev);
+      window.localStorage.setItem("categorySort", next);
+      return next;
+    });
+  }
+
+  function setTagSort(update: (prev: SortMode) => SortMode) {
+    setTagSortState((prev) => {
+      const next = update(prev);
+      window.localStorage.setItem("tagSort", next);
+      return next;
+    });
+  }
 
   const filteredCategoryChips = useMemo(() => {
     const q = categoryFilter.trim().toLowerCase();
@@ -104,7 +127,7 @@ export function Sidebar({
 
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto p-5">
-      <h1 className="font-serif text-2xl font-semibold">Channel Library</h1>
+      <h1 className="font-serif text-2xl font-semibold">Filter Channel Library</h1>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
