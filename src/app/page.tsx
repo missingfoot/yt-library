@@ -418,7 +418,7 @@ export default function Home() {
           onMouseUp={dragScroll.onMouseUp}
           onMouseLeave={dragScroll.onMouseLeave}
           onClickCapture={dragScroll.onClickCapture}
-          className="flex-1 overflow-y-auto overflow-x-auto select-none cursor-grab active:cursor-grabbing touch-none"
+          className="flex-1 overflow-y-auto overflow-x-auto select-none cursor-grab active:cursor-grabbing"
         >
           <div className="w-max min-w-full">
             {visible.map((channel) => (
