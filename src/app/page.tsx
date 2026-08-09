@@ -419,9 +419,9 @@ export default function Home() {
           onMouseUp={dragScroll.onMouseUp}
           onMouseLeave={dragScroll.onMouseLeave}
           onClickCapture={dragScroll.onClickCapture}
-          className="flex-1 overflow-y-auto overflow-x-auto select-none cursor-grab active:cursor-grabbing"
+          className="flex-1 overflow-y-auto max-[767px]:overflow-x-hidden min-[768px]:overflow-x-auto select-none cursor-grab active:cursor-grabbing"
         >
-          <div className="w-max min-w-full">
+          <div className="max-[767px]:w-full min-[768px]:w-max min-[768px]:min-w-full">
             {visible.map((channel) => (
               <ChannelRow
                 key={channel.id}
