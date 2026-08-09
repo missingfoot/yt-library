@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { CategorySelect } from "@/components/CategorySelect";
 import type { ChannelView } from "@/lib/filterChannels";
 
 interface CategoryOption {
@@ -86,21 +87,10 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
         />
       </label>
 
-      <label className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Category</span>
-        <select
-          value={category ?? ""}
-          onChange={(e) => setCategory(e.target.value || undefined)}
-          className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
-        >
-          <option value="">Uncategorized</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </label>
+        <CategorySelect value={category} categories={categories} onChange={setCategory} />
+      </div>
 
       <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { CategorySelect } from "@/components/CategorySelect";
 
 interface CategoryOption {
   id: string;
@@ -49,18 +50,7 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
           placeholder="URL"
           className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
         />
-        <select
-          value={category ?? ""}
-          onChange={(e) => setCategory(e.target.value || undefined)}
-          className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
-        >
-          <option value="">Uncategorized</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <CategorySelect value={category} categories={categories} onChange={setCategory} />
         <div className="flex flex-wrap gap-1.5">
           {selectedTags.map((t) => (
             <span key={t} className="flex items-center gap-1 rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px]">
