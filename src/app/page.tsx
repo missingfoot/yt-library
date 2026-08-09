@@ -10,8 +10,6 @@ import { TopBar, type ViewMode } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
 import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
-import { ManageCategoriesModal } from "@/components/ManageCategoriesModal";
-import { ManageTagsModal } from "@/components/ManageTagsModal";
 import { MergeTagsModal } from "@/components/MergeTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
 import { id } from "@instantdb/react";
@@ -30,8 +28,6 @@ export default function Home() {
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showManageCategoriesModal, setShowManageCategoriesModal] = useState(false);
-  const [showManageTagsModal, setShowManageTagsModal] = useState(false);
   const [mergeSourceTagId, setMergeSourceTagId] = useState<string | null>(null);
 
   const channels: ChannelView[] = useMemo(() => {
@@ -111,6 +107,16 @@ export default function Home() {
 
   function handleToggleTagMode() {
     setTagMode((m) => (m === "and" ? "or" : "and"));
+    setSelectedId(null);
+  }
+
+  function handleClearCategories() {
+    setSelectedCategories(new Set());
+    setSelectedId(null);
+  }
+
+  function handleClearTags() {
+    setSelectedTags(new Set());
     setSelectedId(null);
   }
 
@@ -283,13 +289,13 @@ export default function Home() {
           categoryChips={categoryChips}
           selectedCategories={selectedCategories}
           onToggleCategory={toggleCategory}
+          onClearCategories={handleClearCategories}
           tagChips={tagChips}
           selectedTags={selectedTags}
           onToggleTag={toggleTag}
+          onClearTags={handleClearTags}
           tagMode={tagMode}
           onToggleTagMode={handleToggleTagMode}
-          onManageCategories={() => setShowManageCategoriesModal(true)}
-          onManageTags={() => setShowManageTagsModal(true)}
           onRenameCategory={handleRenameCategory}
           onDeleteCategory={handleDeleteCategory}
           onRenameTag={handleRenameTag}
@@ -347,24 +353,6 @@ export default function Home() {
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
           onMergeTagRequest={setMergeSourceTagId}
-        />
-      )}
-
-      {showManageCategoriesModal && (
-        <ManageCategoriesModal
-          categories={data?.categories ?? []}
-          onRename={handleRenameCategory}
-          onDelete={handleDeleteCategory}
-          onClose={() => setShowManageCategoriesModal(false)}
-        />
-      )}
-
-      {showManageTagsModal && (
-        <ManageTagsModal
-          tags={data?.tags ?? []}
-          onRename={handleRenameTag}
-          onDelete={handleDeleteTag}
-          onClose={() => setShowManageTagsModal(false)}
         />
       )}
 

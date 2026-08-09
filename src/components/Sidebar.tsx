@@ -8,13 +8,13 @@ interface SidebarProps {
   categoryChips: ChipItem[];
   selectedCategories: Set<string>;
   onToggleCategory: (key: string) => void;
+  onClearCategories: () => void;
   tagChips: ChipItem[];
   selectedTags: Set<string>;
   onToggleTag: (key: string) => void;
+  onClearTags: () => void;
   tagMode: "and" | "or";
   onToggleTagMode: () => void;
-  onManageCategories: () => void;
-  onManageTags: () => void;
   onRenameCategory: (id: string, newName: string) => void;
   onDeleteCategory: (id: string) => void;
   onRenameTag: (id: string, newName: string) => void;
@@ -52,13 +52,13 @@ export function Sidebar({
   categoryChips,
   selectedCategories,
   onToggleCategory,
+  onClearCategories,
   tagChips,
   selectedTags,
   onToggleTag,
+  onClearTags,
   tagMode,
   onToggleTagMode,
-  onManageCategories,
-  onManageTags,
   onRenameCategory,
   onDeleteCategory,
   onRenameTag,
@@ -87,12 +87,14 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
-          <button
-            onClick={onManageCategories}
-            className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
-          >
-            manage cats
-          </button>
+          {selectedCategories.size > 0 && (
+            <button
+              onClick={onClearCategories}
+              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+            >
+              clear
+            </button>
+          )}
         </div>
         <ChipFilterInput value={categoryFilter} onChange={setCategoryFilter} placeholder="Filter categories..." />
         <FilterChips
@@ -116,12 +118,14 @@ export function Sidebar({
                 match: {tagMode}
               </button>
             )}
-            <button
-              onClick={onManageTags}
-              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
-            >
-              manage tags
-            </button>
+            {selectedTags.size > 0 && (
+              <button
+                onClick={onClearTags}
+                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              >
+                clear
+              </button>
+            )}
           </div>
         </div>
         <ChipFilterInput value={tagFilter} onChange={setTagFilter} placeholder="Filter tags..." />
