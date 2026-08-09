@@ -1,4 +1,4 @@
-import { ExternalLink, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { catColor } from "@/lib/categoryColors";
 import { catIcon } from "@/lib/categoryIcons";
 import type { ChannelView } from "@/lib/filterChannels";
@@ -52,9 +52,9 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       <span className={`text-sm font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 240, maxWidth: 340 }}>
         {channel.title}
       </span>
-      <div className="flex items-center gap-6 shrink-0">
+      <div className="flex items-center gap-6 flex-1 min-w-0">
         <span className="text-xs text-[var(--text-dim)] shrink-0 w-40 truncate text-left">{categoryLabel}</span>
-        <span className="flex flex-wrap gap-1.5 w-64 shrink-0 text-left">
+        <span className="flex flex-wrap gap-1.5 flex-1 min-w-0 text-left">
           {channel.tags.map((tag) => (
             <span
               key={tag}
@@ -65,16 +65,6 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
           ))}
         </span>
       </div>
-      <a
-        href={videosUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(e) => e.stopPropagation()}
-        title="Open on YouTube"
-        className="shrink-0 opacity-0 group-hover:opacity-100 text-[var(--accent)] transition-opacity"
-      >
-        <ExternalLink size={16} strokeWidth={2} />
-      </a>
     </div>
   );
 }
