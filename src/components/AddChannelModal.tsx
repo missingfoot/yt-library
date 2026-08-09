@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CategorySelect } from "@/components/CategorySelect";
+import { CategorySelect, type CategoryOption } from "@/components/CategorySelect";
 import { TagPicker } from "@/components/TagPicker";
 import { deriveChannelId } from "@/lib/deriveChannelId";
 
-interface CategoryOption {
-  id: string;
-  name: string;
-}
 interface TagOption {
   id: string;
   name: string;

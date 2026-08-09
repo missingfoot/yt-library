@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
-import { catColor } from "@/lib/categoryColors";
-import { catIcon } from "@/lib/categoryIcons";
+import { resolveIcon } from "@/lib/categoryIcons";
 
-interface CategoryOption {
+const UNCATEGORIZED_COLOR = "#5C6274";
+
+export interface CategoryOption {
   id: string;
   name: string;
+  color?: string;
+  icon?: string;
 }
 
 interface CategorySelectProps {
@@ -47,7 +50,7 @@ export function CategorySelect({ value, categories, onChange }: CategorySelectPr
 
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    const options = [{ id: "__uncategorized__", name: "Uncategorized" }, ...categories];
+    const options: CategoryOption[] = [{ id: "__uncategorized__", name: "Uncategorized" }, ...categories];
     if (!q) return options;
     return options.filter((c) => c.name.toLowerCase().includes(q));
   }, [categories, filter]);
@@ -58,7 +61,9 @@ export function CategorySelect({ value, categories, onChange }: CategorySelectPr
     setFilter("");
   }
 
-  const TriggerIcon = catIcon(value);
+  const selectedOption = categories.find((c) => c.name === value);
+  const TriggerIcon = resolveIcon(selectedOption?.icon);
+  const triggerColor = selectedOption?.color || UNCATEGORIZED_COLOR;
   const triggerLabel = value ?? "Uncategorized";
 
   return (
@@ -68,7 +73,7 @@ export function CategorySelect({ value, categories, onChange }: CategorySelectPr
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm text-left"
       >
-        <TriggerIcon size={15} strokeWidth={2} color={catColor(value)} className="shrink-0" />
+        <TriggerIcon size={15} strokeWidth={2} color={triggerColor} className="shrink-0" />
         <span className="flex-1 truncate">{triggerLabel}</span>
         <ChevronDown size={14} strokeWidth={2} className="text-[var(--text-faint)] shrink-0" />
       </button>
@@ -94,7 +99,8 @@ export function CategorySelect({ value, categories, onChange }: CategorySelectPr
             )}
             {filtered.map((c) => {
               const isSelected = c.name === triggerLabel;
-              const Icon = catIcon(c.name === "Uncategorized" ? undefined : c.name);
+              const Icon = resolveIcon(c.icon);
+              const color = c.color || UNCATEGORIZED_COLOR;
               return (
                 <button
                   key={c.id}
@@ -103,7 +109,7 @@ export function CategorySelect({ value, categories, onChange }: CategorySelectPr
                   className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left
                     ${isSelected ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "hover:bg-[var(--surface-hover)] text-[var(--text)]"}`}
                 >
-                  <Icon size={14} strokeWidth={2} color={catColor(c.name === "Uncategorized" ? undefined : c.name)} className="shrink-0" />
+                  <Icon size={14} strokeWidth={2} color={color} className="shrink-0" />
                   <span className="truncate">{c.name}</span>
                 </button>
               );

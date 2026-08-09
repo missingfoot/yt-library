@@ -13,6 +13,7 @@ const _schema = i.schema({
     categories: i.entity({
       name: i.string().unique().indexed(),
       color: i.string(),
+      icon: i.string().optional(),
     }),
     tags: i.entity({
       name: i.string().unique().indexed(),

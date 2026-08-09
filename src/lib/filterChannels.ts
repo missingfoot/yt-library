@@ -6,6 +6,8 @@ export interface ChannelView {
   tags: string[];
   avatarUrl: string | undefined;
   isFavorite: boolean;
+  categoryColor: string | undefined;
+  categoryIcon: string | undefined;
 }
 
 export interface FilterOptions {

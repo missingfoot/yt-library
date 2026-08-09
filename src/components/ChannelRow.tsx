@@ -1,6 +1,5 @@
 import { Star } from "lucide-react";
-import { catColor } from "@/lib/categoryColors";
-import { catIcon } from "@/lib/categoryIcons";
+import { resolveIcon } from "@/lib/categoryIcons";
 import type { ChannelView } from "@/lib/filterChannels";
 
 interface ChannelRowProps {
@@ -12,7 +11,8 @@ interface ChannelRowProps {
 
 export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: ChannelRowProps) {
   const categoryLabel = channel.category ?? "Uncategorized";
-  const Icon = catIcon(channel.category);
+  const Icon = resolveIcon(channel.categoryIcon);
+  const iconColor = channel.categoryColor || "#5C6274";
   const videosUrl = `${channel.url.replace(/\/+$/, "")}/videos`;
 
   return (
@@ -48,7 +48,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
           fill={channel.isFavorite ? "currentColor" : "none"}
         />
       </button>
-      <Icon size={24} strokeWidth={2} className="shrink-0 ml-3" color={catColor(channel.category)} />
+      <Icon size={24} strokeWidth={2} className="shrink-0 ml-3" color={iconColor} />
       {channel.avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0 ml-3" />

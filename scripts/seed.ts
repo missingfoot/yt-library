@@ -2,6 +2,8 @@ import { init, id, tx } from "@instantdb/admin";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import schema from "../instant.schema";
+import { catColor } from "../src/lib/categoryColors";
+import { defaultIconKeyForName } from "../src/lib/categoryIcons";
 
 interface SourceChannel {
   id: string;
@@ -42,7 +44,7 @@ async function main() {
   console.log(`Seeding ${categoryNames.length} categories, ${tagNames.length} tags, ${channels.length} channels...`);
 
   const categoryTxs = categoryNames.map((name) =>
-    tx.categories[categoryIds.get(name)!].update({ name, color: "" })
+    tx.categories[categoryIds.get(name)!].update({ name, color: catColor(name), icon: defaultIconKeyForName(name) })
   );
   for (const batch of chunk(categoryTxs, 50)) {
     await db.transact(batch);

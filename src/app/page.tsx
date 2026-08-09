@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { db } from "@/lib/db";
 import { filterChannels, type ChannelView } from "@/lib/filterChannels";
 import { catColor } from "@/lib/categoryColors";
-import { catIcon } from "@/lib/categoryIcons";
+import { defaultIconKeyForName, resolveIcon } from "@/lib/categoryIcons";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar, type ViewMode } from "@/components/TopBar";
 import { ChannelRow } from "@/components/ChannelRow";
@@ -44,6 +44,8 @@ export default function Home() {
       tags: c.tags.map((t) => t.name),
       avatarUrl: c.avatarUrl,
       isFavorite: c.isFavorite ?? false,
+      categoryColor: c.category?.color,
+      categoryIcon: c.category?.icon,
     }));
   }, [data]);
 
@@ -57,8 +59,15 @@ export default function Home() {
       .sort((a, b) => b[1] - a[1])
       .map(([key, count]) => {
         const categoryName = key === "Uncategorized" ? undefined : key;
-        const entityId = categoryName ? data?.categories.find((c) => c.name === categoryName)?.id : undefined;
-        return { key, label: key, count, color: catColor(categoryName), icon: catIcon(categoryName), entityId };
+        const entity = categoryName ? data?.categories.find((c) => c.name === categoryName) : undefined;
+        return {
+          key,
+          label: key,
+          count,
+          color: entity?.color || catColor(categoryName),
+          icon: resolveIcon(entity?.icon),
+          entityId: entity?.id,
+        };
       });
   }, [channels, data?.categories]);
 
@@ -149,7 +158,15 @@ export default function Home() {
     if (updates.category) {
       const existing = data?.categories.find((c) => c.name === updates.category);
       const categoryId = existing?.id ?? id();
-      if (!existing) txSteps.push(db.tx.categories[categoryId].update({ name: updates.category, color: "" }));
+      if (!existing) {
+        txSteps.push(
+          db.tx.categories[categoryId].update({
+            name: updates.category,
+            color: catColor(updates.category),
+            icon: defaultIconKeyForName(updates.category),
+          })
+        );
+      }
       step = step.link({ category: categoryId });
     } else {
       const channelBefore = data?.channels.find((c) => c.id === channelId);
@@ -193,7 +210,15 @@ export default function Home() {
     if (values.category) {
       const existing = data?.categories.find((c) => c.name === values.category);
       const categoryId = existing?.id ?? id();
-      if (!existing) txSteps.push(db.tx.categories[categoryId].update({ name: values.category, color: "" }));
+      if (!existing) {
+        txSteps.push(
+          db.tx.categories[categoryId].update({
+            name: values.category,
+            color: catColor(values.category),
+            icon: defaultIconKeyForName(values.category),
+          })
+        );
+      }
       step = step.link({ category: categoryId });
     }
 
