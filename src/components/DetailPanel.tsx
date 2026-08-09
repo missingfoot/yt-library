@@ -136,9 +136,9 @@ export function DetailPanel({ onClose, channel, categories, tags, tagCounts, onS
         <button
           onClick={onClose}
           title="Close"
-          className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
+          className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)] max-[767px]:p-2"
         >
-          <X size={16} strokeWidth={2} />
+          <X size={16} strokeWidth={2} className="max-[767px]:size-5" />
         </button>
       </div>
       <div className="flex flex-col gap-4 p-5">
@@ -181,9 +181,9 @@ export function DetailPanel({ onClose, channel, categories, tags, tagCounts, onS
             tabIndex={0}
             onClick={handleClearAvatar}
             title="Clear avatar"
-            className="absolute top-1 right-1 rounded bg-black/60 p-1 opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-opacity"
+            className="absolute top-1 right-1 rounded bg-black/60 p-1 opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-opacity max-[767px]:opacity-100 max-[767px]:p-1.5"
           >
-            <X size={12} strokeWidth={2.5} className="text-white" />
+            <X size={12} strokeWidth={2.5} className="text-white max-[767px]:size-4" />
           </span>
         )}
       </button>

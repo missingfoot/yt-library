@@ -57,8 +57,8 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-xl">Sign in</h2>
-          <button onClick={onClose} title="Close" className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]">
-            <X size={16} strokeWidth={2} />
+          <button onClick={onClose} title="Close" className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)] max-[767px]:p-2">
+            <X size={16} strokeWidth={2} className="max-[767px]:size-5" />
           </button>
         </div>
 

@@ -138,9 +138,9 @@ export function Sidebar({
         <button
           onClick={onClose}
           title="Close"
-          className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)]"
+          className="rounded p-1.5 text-[var(--text-dim)] hover:bg-[var(--surface-hover)] max-[767px]:p-2"
         >
-          <X size={16} strokeWidth={2} />
+          <X size={16} strokeWidth={2} className="max-[767px]:size-5" />
         </button>
       </div>
       <div className="flex flex-col gap-6 p-5">

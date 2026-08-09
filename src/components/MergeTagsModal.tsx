@@ -42,8 +42,8 @@ export function MergeTagsModal({ sourceTagId, allTags, onMerge, onClose }: Merge
       <div className="w-full max-w-lg max-h-[80vh] rounded-lg border border-[var(--border)] bg-[var(--surface)] flex flex-col">
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-soft)] shrink-0">
           <h2 className="font-serif text-xl">Merge tags</h2>
-          <button onClick={onClose} title="Close" className="text-[var(--text-dim)] hover:text-[var(--text)]">
-            <X size={16} strokeWidth={2} />
+          <button onClick={onClose} title="Close" className="rounded p-1.5 -m-1.5 text-[var(--text-dim)] hover:text-[var(--text)] max-[767px]:p-2 max-[767px]:-m-2">
+            <X size={16} strokeWidth={2} className="max-[767px]:size-5" />
           </button>
         </div>
 
