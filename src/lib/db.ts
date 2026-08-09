@@ -7,4 +7,4 @@ if (!APP_ID) {
   throw new Error("NEXT_PUBLIC_INSTANT_APP_ID is not set in .env.local");
 }
 
-export const db = init({ appId: APP_ID, schema });
+export const db = init({ appId: APP_ID, schema, devtool: false });
