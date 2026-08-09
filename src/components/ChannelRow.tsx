@@ -20,6 +20,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       role="button"
       tabIndex={0}
       onClick={onSelect}
+      onDoubleClick={() => window.open(videosUrl, "_blank", "noopener,noreferrer")}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onSelect();
       }}
