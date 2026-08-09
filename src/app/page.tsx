@@ -13,6 +13,7 @@ import { AddChannelModal } from "@/components/AddChannelModal";
 import { MergeTagsModal } from "@/components/MergeTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
 import { AuthModal } from "@/components/AuthModal";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { id } from "@instantdb/react";
 import { useDragScroll } from "@/lib/useDragScroll";
 
@@ -359,7 +360,7 @@ export default function Home() {
     setMergeSourceTagId(null);
   }
 
-  if (isLoading) return <div className="p-10 text-[var(--text-dim)]">Loading...</div>;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <div className="p-10 text-red-400">Error: {error.message}</div>;
 
   return (
