@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Delete, ArrowDownAZ, ArrowDown01 } from "lucide-react";
+import { Search, Delete } from "lucide-react";
 import { FilterChips, type ChipItem } from "@/components/FilterChips";
 
 interface SidebarProps {
@@ -36,20 +36,8 @@ function sortChips(chips: ChipItem[], mode: SortMode): ChipItem[] {
   return sorted;
 }
 
-function SortToggle({ mode, onToggle }: { mode: SortMode; onToggle: () => void }) {
-  return (
-    <button
-      onClick={onToggle}
-      title={mode === "count" ? "Sorted by count" : "Sorted alphabetically"}
-      className="text-[var(--accent)]"
-    >
-      {mode === "count" ? (
-        <ArrowDown01 size={13} strokeWidth={2} />
-      ) : (
-        <ArrowDownAZ size={13} strokeWidth={2} />
-      )}
-    </button>
-  );
+function HeaderPipe() {
+  return <span className="text-[var(--border)]">|</span>;
 }
 
 function ChipFilterInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -121,8 +109,14 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
-          <div className="flex items-center gap-3">
-            <SortToggle mode={categorySort} onToggle={() => setCategorySort((m) => (m === "count" ? "alpha" : "count"))} />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCategorySort((m) => (m === "count" ? "alpha" : "count"))}
+              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+            >
+              sort: {categorySort}
+            </button>
+            <HeaderPipe />
             <button
               onClick={onToggleCategoryMode}
               className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
@@ -130,12 +124,15 @@ export function Sidebar({
               match: {categoryMode}
             </button>
             {selectedCategories.size > 0 && (
-              <button
-                onClick={onClearCategories}
-                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
-              >
-                clear
-              </button>
+              <>
+                <HeaderPipe />
+                <button
+                  onClick={onClearCategories}
+                  className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+                >
+                  clear
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -152,8 +149,14 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</h3>
-          <div className="flex items-center gap-3">
-            <SortToggle mode={tagSort} onToggle={() => setTagSort((m) => (m === "count" ? "alpha" : "count"))} />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTagSort((m) => (m === "count" ? "alpha" : "count"))}
+              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+            >
+              sort: {tagSort}
+            </button>
+            <HeaderPipe />
             <button
               onClick={onToggleTagMode}
               className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
@@ -161,12 +164,15 @@ export function Sidebar({
               match: {tagMode}
             </button>
             {selectedTags.size > 0 && (
-              <button
-                onClick={onClearTags}
-                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
-              >
-                clear
-              </button>
+              <>
+                <HeaderPipe />
+                <button
+                  onClick={onClearTags}
+                  className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+                >
+                  clear
+                </button>
+              </>
             )}
           </div>
         </div>
