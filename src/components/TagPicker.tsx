@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { ChipContextMenu } from "@/components/ChipContextMenu";
 import type { ChipItem } from "@/components/FilterChips";
+import { useLongPress } from "@/lib/useLongPress";
 
 interface TagOption {
   id: string;
@@ -40,6 +41,10 @@ export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRename
 
   const realTagIds = useMemo(() => new Set(allTags.map((t) => t.id)), [allTags]);
   const canEdit = !!(onRenameTag || onDeleteTag);
+  const longPress = useLongPress<{ id: string; isRealTag: boolean }>(({ id, isRealTag }, point) => {
+    if (!canEdit || !isRealTag) return;
+    setMenu({ id, x: point.x, y: point.y });
+  });
   const countByName = useMemo(() => {
     const m = new Map<string, number>();
     for (const c of tagCounts ?? []) m.set(c.label, c.count);
@@ -161,6 +166,7 @@ export function TagPicker({ allTags, tagCounts, selectedTags, onToggle, onRename
                 e.preventDefault();
                 setMenu({ id: t.id, x: e.clientX, y: e.clientY });
               }}
+              {...longPress.getHandlers({ id: t.id, isRealTag })}
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors
                 ${isSelected
                   ? "border-[var(--accent-line)] bg-[var(--accent-soft)] text-[var(--accent)]"

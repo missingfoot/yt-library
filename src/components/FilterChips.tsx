@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { ChipContextMenu } from "@/components/ChipContextMenu";
+import { useLongPress } from "@/lib/useLongPress";
 
 export interface ChipItem {
   key: string;
@@ -27,6 +28,10 @@ export function FilterChips({ items, selected, onToggle, onRename, onDelete, onM
   const [menu, setMenu] = useState<{ key: string; x: number; y: number } | null>(null);
 
   const canEdit = !!(onRename || onDelete);
+  const longPress = useLongPress<ChipItem>((item, point) => {
+    if (!canEdit || !item.entityId) return;
+    setMenu({ key: item.key, x: point.x, y: point.y });
+  });
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -67,6 +72,7 @@ export function FilterChips({ items, selected, onToggle, onRename, onDelete, onM
               e.preventDefault();
               setMenu({ key: item.key, x: e.clientX, y: e.clientY });
             }}
+            {...longPress.getHandlers(item)}
             className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors
               ${isActive
                 ? "border-[var(--accent-line)] bg-[var(--accent-soft)] text-[var(--accent)]"

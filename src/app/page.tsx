@@ -390,15 +390,17 @@ export default function Home() {
           onClickCapture={dragScroll.onClickCapture}
           className="flex-1 overflow-y-auto overflow-x-auto select-none cursor-grab active:cursor-grabbing"
         >
-          {visible.map((channel) => (
-            <ChannelRow
-              key={channel.id}
-              channel={channel}
-              isSelected={channel.id === selectedId}
-              onSelect={() => setSelectedId(channel.id)}
-              onToggleFavorite={() => handleToggleFavorite(channel.id, channel.isFavorite)}
-            />
-          ))}
+          <div className="w-max min-w-full">
+            {visible.map((channel) => (
+              <ChannelRow
+                key={channel.id}
+                channel={channel}
+                isSelected={channel.id === selectedId}
+                onSelect={() => setSelectedId(channel.id)}
+                onToggleFavorite={() => handleToggleFavorite(channel.id, channel.isFavorite)}
+              />
+            ))}
+          </div>
         </div>
       </main>
 

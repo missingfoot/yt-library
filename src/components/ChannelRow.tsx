@@ -33,7 +33,7 @@ export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: 
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onSelect();
       }}
-      className={`group w-max min-w-full flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-soft)] text-left transition-colors cursor-pointer
+      className={`group w-full flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-soft)] text-left transition-colors cursor-pointer
         ${isSelected ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--surface-hover)]"}`}
     >
       <button
