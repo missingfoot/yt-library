@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
 
 export function AuthModal({ onClose }: { onClose: () => void }) {
+  const { user } = db.useAuth();
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -61,7 +62,19 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {step === "email" ? (
+        {user && user.email !== OWNER_EMAIL ? (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-[var(--text-faint)]">
+              Signed in as {user.email}, which isn&apos;t the account that can make changes.
+            </p>
+            <button
+              onClick={() => db.auth.signOut()}
+              className="self-end text-xs font-mono text-[var(--accent)] px-3 py-1.5 border border-[var(--accent-line)] rounded"
+            >
+              sign out
+            </button>
+          </div>
+        ) : step === "email" ? (
           <form onSubmit={sendCode} className="flex flex-col gap-3">
             <p className="text-xs text-[var(--text-faint)]">Sign in to add, edit, or delete channels. Viewing is always open.</p>
             <input

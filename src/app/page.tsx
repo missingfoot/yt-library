@@ -29,12 +29,8 @@ export default function Home() {
   const isOwner = user?.email === OWNER_EMAIL;
 
   function requireAuth(): boolean {
-    if (!user) {
+    if (!user || !isOwner) {
       setShowSignIn(true);
-      return false;
-    }
-    if (!isOwner) {
-      alert(`Signed in as ${user.email}, but only ${OWNER_EMAIL} can make changes.`);
       return false;
     }
     return true;
