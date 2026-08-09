@@ -4,6 +4,8 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { db } from "@/lib/db";
 
+const OWNER_EMAIL = "ytdb@jamessparkes.com";
+
 export function AuthModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -14,6 +16,10 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
+    if (email.trim().toLowerCase() !== OWNER_EMAIL) {
+      setError("This library isn't open for editing by other accounts.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
