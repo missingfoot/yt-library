@@ -77,7 +77,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
         onClick={handleFetchAvatar}
         disabled={avatarLoading}
         title={channel.avatarUrl ? "Refresh avatar" : "Get avatar"}
-        className="group relative h-32 w-32 rounded-full shrink-0 overflow-hidden disabled:opacity-60"
+        className="group relative h-32 w-32 rounded-lg shrink-0 overflow-hidden disabled:opacity-60"
       >
         {channel.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
