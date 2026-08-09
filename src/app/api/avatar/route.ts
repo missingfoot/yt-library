@@ -12,7 +12,22 @@ function isAllowedHost(hostname: string): boolean {
   return hostname === "youtube.com" || hostname.endsWith(".youtube.com");
 }
 
+async function requireUser(request: NextRequest): Promise<boolean> {
+  const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  if (!token) return false;
+  try {
+    await db.auth.verifyToken(token);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: NextRequest) {
+  if (!(await requireUser(request))) {
+    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  }
+
   const channelUrl = request.nextUrl.searchParams.get("url");
   const channelId = request.nextUrl.searchParams.get("channelId");
   if (!channelUrl || !channelId) {
@@ -76,6 +91,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!(await requireUser(request))) {
+    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  }
+
   const channelId = request.nextUrl.searchParams.get("channelId");
   if (!channelId) {
     return NextResponse.json({ error: "Missing channelId parameter" }, { status: 400 });

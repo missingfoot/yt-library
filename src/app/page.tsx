@@ -12,6 +12,7 @@ import { DetailPanel } from "@/components/DetailPanel";
 import { AddChannelModal } from "@/components/AddChannelModal";
 import { MergeTagsModal } from "@/components/MergeTagsModal";
 import { type ChipItem } from "@/components/FilterChips";
+import { AuthModal } from "@/components/AuthModal";
 import { id } from "@instantdb/react";
 import { useDragScroll } from "@/lib/useDragScroll";
 
@@ -21,6 +22,16 @@ export default function Home() {
     categories: {},
     tags: { channels: {} },
   });
+  const { user } = db.useAuth();
+  const [showSignIn, setShowSignIn] = useState(false);
+
+  function requireAuth(): boolean {
+    if (!user) {
+      setShowSignIn(true);
+      return false;
+    }
+    return true;
+  }
 
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("all");
@@ -152,11 +163,15 @@ export default function Home() {
   const selectedChannel = channels.find((c) => c.id === selectedId) ?? null;
 
   function handleToggleFavorite(channelId: string, current: boolean) {
+    if (!requireAuth()) return;
     db.transact(db.tx.channels[channelId].update({ isFavorite: !current }));
   }
 
   async function handleFetchAvatar(channelId: string, url: string) {
-    const res = await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}&url=${encodeURIComponent(url)}`);
+    if (!requireAuth()) return;
+    const res = await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}&url=${encodeURIComponent(url)}`, {
+      headers: { Authorization: `Bearer ${user!.refresh_token}` },
+    });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       alert(body.error ?? "Failed to fetch avatar");
@@ -164,7 +179,11 @@ export default function Home() {
   }
 
   async function handleClearAvatar(channelId: string) {
-    await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}`, { method: "DELETE" });
+    if (!requireAuth()) return;
+    await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${user!.refresh_token}` },
+    });
   }
 
   async function handleFetchChannelTags(url: string): Promise<string[]> {
@@ -179,6 +198,7 @@ export default function Home() {
   }
 
   function handleDelete(channelId: string) {
+    if (!requireAuth()) return;
     if (!confirm("Delete this channel?")) return;
     db.transact(db.tx.channels[channelId].delete());
     setSelectedId(null);
@@ -188,6 +208,7 @@ export default function Home() {
     channelId: string,
     updates: { title: string; url: string; category: string | undefined; tags: string[] }
   ) {
+    if (!requireAuth()) return;
     const txSteps = [];
     let step = db.tx.channels[channelId].update({ title: updates.title, url: updates.url });
 
@@ -234,6 +255,7 @@ export default function Home() {
     category: string | undefined;
     tags: string[];
   }) {
+    if (!requireAuth()) return;
     const txSteps = [];
     const newId = id();
     let step = db.tx.channels[newId].update({
@@ -273,14 +295,17 @@ export default function Home() {
   }
 
   function handleRenameCategory(categoryId: string, newName: string) {
+    if (!requireAuth()) return;
     db.transact(db.tx.categories[categoryId].update({ name: newName }));
   }
 
   function handleDeleteCategory(categoryId: string) {
+    if (!requireAuth()) return;
     db.transact(db.tx.categories[categoryId].delete());
   }
 
   function handleRenameTag(tagId: string, newName: string) {
+    if (!requireAuth()) return;
     const trimmedName = newName.trim();
     const existingMatch = data?.tags.find(
       (t) => t.name.toLowerCase() === trimmedName.toLowerCase() && t.id !== tagId,
@@ -293,10 +318,12 @@ export default function Home() {
   }
 
   function handleDeleteTag(tagId: string) {
+    if (!requireAuth()) return;
     db.transact(db.tx.tags[tagId].delete());
   }
 
   async function handleMergeTags(tagIds: string[], finalName: string) {
+    if (!requireAuth()) return;
     if (tagIds.length < 2 || !finalName.trim()) return;
     const trimmedName = finalName.trim();
 
@@ -363,7 +390,7 @@ export default function Home() {
           onDeleteCategory={handleDeleteCategory}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
-          onMergeTagRequest={setMergeSourceTagId}
+          onMergeTagRequest={(id: string) => requireAuth() && setMergeSourceTagId(id)}
         />
       </aside>
 
@@ -373,7 +400,7 @@ export default function Home() {
             onOpenSidebar={() => setSidebarOpen(true)}
             search={search}
             onSearchChange={handleSearchChange}
-            onAddChannel={() => setShowAddModal(true)}
+            onAddChannel={() => requireAuth() && setShowAddModal(true)}
             viewMode={viewMode}
             onViewModeChange={handleViewModeChange}
           />
@@ -428,7 +455,7 @@ export default function Home() {
           onFetchChannelTags={handleFetchChannelTags}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
-          onMergeTagRequest={setMergeSourceTagId}
+          onMergeTagRequest={(id: string) => requireAuth() && setMergeSourceTagId(id)}
         />
       </aside>
 
@@ -440,7 +467,7 @@ export default function Home() {
           onClose={() => setShowAddModal(false)}
           onRenameTag={handleRenameTag}
           onDeleteTag={handleDeleteTag}
-          onMergeTagRequest={setMergeSourceTagId}
+          onMergeTagRequest={(id: string) => requireAuth() && setMergeSourceTagId(id)}
         />
       )}
 
@@ -452,6 +479,8 @@ export default function Home() {
           onClose={() => setMergeSourceTagId(null)}
         />
       )}
+
+      {showSignIn && <AuthModal onClose={() => setShowSignIn(false)} />}
     </div>
   );
 }
