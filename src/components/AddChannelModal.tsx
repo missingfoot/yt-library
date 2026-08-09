@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
 import { CategorySelect } from "@/components/CategorySelect";
+import { TagPicker } from "@/components/TagPicker";
 import { deriveChannelId } from "@/lib/deriveChannelId";
 
 interface CategoryOption {
@@ -26,7 +26,10 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
+
+  function toggleTag(name: string) {
+    setSelectedTags((prev) => (prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]));
+  }
 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/60">
@@ -45,36 +48,7 @@ export function AddChannelModal({ categories, tags, onAdd, onClose }: AddChannel
           className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
         />
         <CategorySelect value={category} categories={categories} onChange={setCategory} />
-        <div className="flex flex-wrap gap-1.5">
-          {selectedTags.map((t) => (
-            <span key={t} className="flex items-center gap-1 rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px]">
-              {t}
-              <button onClick={() => setSelectedTags((prev) => prev.filter((x) => x !== t))} className="flex items-center">
-                <X size={11} strokeWidth={2} />
-              </button>
-            </span>
-          ))}
-        </div>
-        <input
-          list="add-tag-vocabulary"
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              const trimmed = tagInput.trim();
-              if (trimmed && !selectedTags.includes(trimmed)) setSelectedTags((prev) => [...prev, trimmed]);
-              setTagInput("");
-            }
-          }}
-          placeholder="Add tag and press Enter"
-          className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
-        />
-        <datalist id="add-tag-vocabulary">
-          {tags.map((t) => (
-            <option key={t.id} value={t.name} />
-          ))}
-        </datalist>
+        <TagPicker allTags={tags} selectedTags={selectedTags} onToggle={toggleTag} />
 
         <div className="flex gap-2 justify-end pt-2">
           <button onClick={onClose} className="text-xs font-mono text-[var(--text-dim)] px-3 py-1.5">

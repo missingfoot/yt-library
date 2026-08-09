@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { CategorySelect } from "@/components/CategorySelect";
+import { TagPicker } from "@/components/TagPicker";
 import type { ChannelView } from "@/lib/filterChannels";
 
 interface CategoryOption {
@@ -28,7 +29,6 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
     if (channel) {
@@ -36,7 +36,6 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
       setUrl(channel.url);
       setCategory(channel.category);
       setSelectedTags(channel.tags);
-      setTagInput("");
     }
   }, [channel]);
 
@@ -48,14 +47,8 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
     );
   }
 
-  const tagNames = tags.map((t) => t.name);
-
-  function addTag(name: string) {
-    const trimmed = name.trim();
-    if (trimmed && !selectedTags.includes(trimmed)) {
-      setSelectedTags((prev) => [...prev, trimmed]);
-    }
-    setTagInput("");
+  function toggleTag(name: string) {
+    setSelectedTags((prev) => (prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]));
   }
 
   return (
@@ -94,37 +87,7 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onClo
 
       <div className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</span>
-        <div className="flex flex-wrap gap-1.5">
-          {selectedTags.map((t) => (
-            <span
-              key={t}
-              className="flex items-center gap-1 rounded-full bg-[var(--surface-active)] px-2 py-0.5 text-[11px]"
-            >
-              {t}
-              <button onClick={() => setSelectedTags((prev) => prev.filter((x) => x !== t))} className="flex items-center">
-                <X size={11} strokeWidth={2} />
-              </button>
-            </span>
-          ))}
-        </div>
-        <input
-          list="tag-vocabulary"
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              addTag(tagInput);
-            }
-          }}
-          placeholder="Add tag and press Enter"
-          className="rounded border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-sm"
-        />
-        <datalist id="tag-vocabulary">
-          {tagNames.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
+        <TagPicker allTags={tags} selectedTags={selectedTags} onToggle={toggleTag} />
       </div>
       </div>
 
