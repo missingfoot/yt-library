@@ -24,6 +24,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [categoryMode, setCategoryMode] = useState<"additive" | "toggle">("additive");
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagMode, setTagMode] = useState<"and" | "or">("and");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -79,6 +80,9 @@ export default function Home() {
 
   function toggleCategory(key: string) {
     setSelectedCategories((prev) => {
+      if (categoryMode === "toggle") {
+        return prev.has(key) ? new Set() : new Set([key]);
+      }
       const next = new Set(prev);
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
@@ -112,6 +116,17 @@ export default function Home() {
 
   function handleClearCategories() {
     setSelectedCategories(new Set());
+    setSelectedId(null);
+  }
+
+  function handleToggleCategoryMode() {
+    setCategoryMode((m) => {
+      const next = m === "additive" ? "toggle" : "additive";
+      if (next === "toggle" && selectedCategories.size > 1) {
+        setSelectedCategories(new Set([[...selectedCategories][0]]));
+      }
+      return next;
+    });
     setSelectedId(null);
   }
 
@@ -290,6 +305,8 @@ export default function Home() {
           selectedCategories={selectedCategories}
           onToggleCategory={toggleCategory}
           onClearCategories={handleClearCategories}
+          categoryMode={categoryMode}
+          onToggleCategoryMode={handleToggleCategoryMode}
           tagChips={tagChips}
           selectedTags={selectedTags}
           onToggleTag={toggleTag}

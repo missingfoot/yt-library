@@ -9,6 +9,8 @@ interface SidebarProps {
   selectedCategories: Set<string>;
   onToggleCategory: (key: string) => void;
   onClearCategories: () => void;
+  categoryMode: "additive" | "toggle";
+  onToggleCategoryMode: () => void;
   tagChips: ChipItem[];
   selectedTags: Set<string>;
   onToggleTag: (key: string) => void;
@@ -53,6 +55,8 @@ export function Sidebar({
   selectedCategories,
   onToggleCategory,
   onClearCategories,
+  categoryMode,
+  onToggleCategoryMode,
   tagChips,
   selectedTags,
   onToggleTag,
@@ -87,14 +91,22 @@ export function Sidebar({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Categories</h3>
-          {selectedCategories.size > 0 && (
+          <div className="flex items-center gap-3">
             <button
-              onClick={onClearCategories}
+              onClick={onToggleCategoryMode}
               className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
             >
-              clear
+              match: {categoryMode}
             </button>
-          )}
+            {selectedCategories.size > 0 && (
+              <button
+                onClick={onClearCategories}
+                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+              >
+                clear
+              </button>
+            )}
+          </div>
         </div>
         <ChipFilterInput value={categoryFilter} onChange={setCategoryFilter} placeholder="Filter categories..." />
         <FilterChips
