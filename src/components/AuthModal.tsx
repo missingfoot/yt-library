@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { db } from "@/lib/db";
 
-const OWNER_EMAIL = "ytdb@jamessparkes.com";
+const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
 
 export function AuthModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<"email" | "code">("email");

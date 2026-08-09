@@ -16,7 +16,7 @@ import { AuthModal } from "@/components/AuthModal";
 import { id } from "@instantdb/react";
 import { useDragScroll } from "@/lib/useDragScroll";
 
-const OWNER_EMAIL = "ytdb@jamessparkes.com";
+const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
 
 export default function Home() {
   const { isLoading, error, data } = db.useQuery({

@@ -12,7 +12,7 @@ function isAllowedHost(hostname: string): boolean {
   return hostname === "youtube.com" || hostname.endsWith(".youtube.com");
 }
 
-const OWNER_EMAIL = "ytdb@jamessparkes.com";
+const OWNER_EMAIL = "f7VaFtYGt83ZLsRaviRUvykW@jamessparkes.com";
 
 async function requireUser(request: NextRequest): Promise<boolean> {
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
