@@ -40,6 +40,7 @@ export default function Home() {
       category: c.category?.name,
       tags: c.tags.map((t) => t.name),
       avatarUrl: c.avatarUrl,
+      isFavorite: c.isFavorite ?? false,
     }));
   }, [data]);
 
@@ -96,6 +97,10 @@ export default function Home() {
   );
 
   const selectedChannel = channels.find((c) => c.id === selectedId) ?? null;
+
+  function handleToggleFavorite(channelId: string, current: boolean) {
+    db.transact(db.tx.channels[channelId].update({ isFavorite: !current }));
+  }
 
   async function handleFetchAvatar(channelId: string, url: string) {
     const res = await fetch(`/api/avatar?url=${encodeURIComponent(url)}`);
@@ -240,6 +245,7 @@ export default function Home() {
               channel={channel}
               isSelected={channel.id === selectedId}
               onSelect={() => setSelectedId(channel.id)}
+              onToggleFavorite={() => handleToggleFavorite(channel.id, channel.isFavorite)}
             />
           ))}
         </div>

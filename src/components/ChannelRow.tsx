@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { catColor } from "@/lib/categoryColors";
 import { catIcon } from "@/lib/categoryIcons";
 import type { ChannelView } from "@/lib/filterChannels";
@@ -7,9 +7,10 @@ interface ChannelRowProps {
   channel: ChannelView;
   isSelected: boolean;
   onSelect: () => void;
+  onToggleFavorite: () => void;
 }
 
-export function ChannelRow({ channel, isSelected, onSelect }: ChannelRowProps) {
+export function ChannelRow({ channel, isSelected, onSelect, onToggleFavorite }: ChannelRowProps) {
   const categoryLabel = channel.category ?? "Uncategorized";
   const Icon = catIcon(channel.category);
 
@@ -24,12 +25,27 @@ export function ChannelRow({ channel, isSelected, onSelect }: ChannelRowProps) {
       className={`group w-full flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-soft)] text-left transition-colors cursor-pointer
         ${isSelected ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--surface-hover)]"}`}
     >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite();
+        }}
+        title={channel.isFavorite ? "Unfavorite" : "Favorite"}
+        className="shrink-0 text-[var(--text-faint)] hover:text-[var(--accent)]"
+      >
+        <Star
+          size={16}
+          strokeWidth={2}
+          className={channel.isFavorite ? "text-[var(--accent)]" : ""}
+          fill={channel.isFavorite ? "currentColor" : "none"}
+        />
+      </button>
       <Icon size={24} strokeWidth={2} className="shrink-0" color={catColor(channel.category)} />
       {channel.avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0" />
+        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0 ml-2" />
       ) : (
-        <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0" />
+        <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0 ml-2" />
       )}
       <span className={`font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
         {channel.title}

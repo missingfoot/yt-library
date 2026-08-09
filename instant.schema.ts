@@ -8,6 +8,7 @@ const _schema = i.schema({
       url: i.string(),
       createdAt: i.number(),
       avatarUrl: i.string().optional(),
+      isFavorite: i.boolean().optional(),
     }),
     categories: i.entity({
       name: i.string().unique().indexed(),
