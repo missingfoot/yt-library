@@ -122,14 +122,12 @@ export function Sidebar({
         <div className="flex items-center justify-between">
           <h3 className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Tags</h3>
           <div className="flex items-center gap-3">
-            {selectedTags.size > 1 && (
-              <button
-                onClick={onToggleTagMode}
-                className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
-              >
-                match: {tagMode}
-              </button>
-            )}
+            <button
+              onClick={onToggleTagMode}
+              className="text-[10.5px] font-mono text-[var(--accent)] uppercase"
+            >
+              match: {tagMode}
+            </button>
             {selectedTags.size > 0 && (
               <button
                 onClick={onClearTags}
