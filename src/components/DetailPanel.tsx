@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, ImageDown, RefreshCw } from "lucide-react";
 import { CategorySelect } from "@/components/CategorySelect";
 import { TagPicker } from "@/components/TagPicker";
 import type { ChannelView } from "@/lib/filterChannels";
@@ -73,25 +73,29 @@ export function DetailPanel({ channel, categories, tags, onSave, onDelete, onFet
 
       <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
 
-      <div className="flex items-center gap-3">
+      <button
+        onClick={handleFetchAvatar}
+        disabled={avatarLoading}
+        title={channel.avatarUrl ? "Refresh avatar" : "Get avatar"}
+        className="group relative h-32 w-32 rounded-full shrink-0 overflow-hidden disabled:opacity-60"
+      >
         {channel.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={channel.avatarUrl}
-            alt=""
-            className="h-14 w-14 rounded-full object-cover shrink-0"
-          />
+          <img src={channel.avatarUrl} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="h-14 w-14 rounded-full bg-[var(--surface-active)] shrink-0" />
+          <div className="h-full w-full bg-[var(--surface-active)]" />
         )}
-        <button
-          onClick={handleFetchAvatar}
-          disabled={avatarLoading}
-          className="text-xs font-mono text-[var(--accent)] px-3 py-1.5 border border-[var(--accent-line)] rounded disabled:opacity-40"
+        <div
+          className={`absolute inset-0 flex items-center justify-center bg-black/50 transition-opacity
+            ${avatarLoading ? "opacity-100" : channel.avatarUrl ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}
         >
-          {avatarLoading ? "fetching..." : channel.avatarUrl ? "refresh avatar" : "get avatar"}
-        </button>
-      </div>
+          {channel.avatarUrl ? (
+            <RefreshCw size={24} strokeWidth={2} className={`text-white ${avatarLoading ? "animate-spin" : ""}`} />
+          ) : (
+            <ImageDown size={28} strokeWidth={2} className={`text-[var(--text-dim)] ${avatarLoading ? "animate-spin" : ""}`} />
+          )}
+        </div>
+      </button>
 
       <label className="flex flex-col gap-1">
         <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--text-faint)]">Title</span>
