@@ -78,6 +78,7 @@ export default function Home() {
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
+    setSelectedId(null);
   }
 
   function toggleTag(key: string) {
@@ -86,6 +87,22 @@ export default function Home() {
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
+    setSelectedId(null);
+  }
+
+  function handleSearchChange(value: string) {
+    setSearch(value);
+    setSelectedId(null);
+  }
+
+  function handleViewModeChange(mode: ViewMode) {
+    setViewMode(mode);
+    setSelectedId(null);
+  }
+
+  function handleToggleTagMode() {
+    setTagMode((m) => (m === "and" ? "or" : "and"));
+    setSelectedId(null);
   }
 
   const visible = useMemo(() => {
@@ -245,7 +262,7 @@ export default function Home() {
           selectedTags={selectedTags}
           onToggleTag={toggleTag}
           tagMode={tagMode}
-          onToggleTagMode={() => setTagMode((m) => (m === "and" ? "or" : "and"))}
+          onToggleTagMode={handleToggleTagMode}
           onManageCategories={() => setShowManageCategoriesModal(true)}
           onManageTags={() => setShowManageTagsModal(true)}
           onRenameCategory={handleRenameCategory}
@@ -260,10 +277,10 @@ export default function Home() {
         <div className="sticky top-0 z-10 bg-[var(--bg)]">
           <TopBar
             search={search}
-            onSearchChange={setSearch}
+            onSearchChange={handleSearchChange}
             onAddChannel={() => setShowAddModal(true)}
             viewMode={viewMode}
-            onViewModeChange={setViewMode}
+            onViewModeChange={handleViewModeChange}
           />
           <div className="px-4 py-2 text-xs font-mono text-[var(--text-faint)] border-b border-[var(--border-soft)]">
             {visible.length} channel{visible.length === 1 ? "" : "s"}
