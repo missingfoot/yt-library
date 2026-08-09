@@ -25,6 +25,12 @@ export function ChannelRow({ channel, isSelected, onSelect }: ChannelRowProps) {
         ${isSelected ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--surface-hover)]"}`}
     >
       <Icon size={24} strokeWidth={2} className="shrink-0" color={catColor(channel.category)} />
+      {channel.avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={channel.avatarUrl} alt="" className="h-6 w-6 rounded object-cover shrink-0" />
+      ) : (
+        <div className="h-6 w-6 rounded border border-[var(--border)] shrink-0" />
+      )}
       <span className={`font-medium truncate ${isSelected ? "text-[var(--accent)]" : "text-[var(--text)]"}`} style={{ minWidth: 290, maxWidth: 430 }}>
         {channel.title}
       </span>
