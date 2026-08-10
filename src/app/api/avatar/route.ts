@@ -87,8 +87,10 @@ export async function GET(request: NextRequest) {
     const avatarUrl = fileResult.$files[0]?.url;
 
     return NextResponse.json({ avatarUrl });
-  } catch {
-    return NextResponse.json({ error: "Failed to store avatar" }, { status: 500 });
+  } catch (err) {
+    console.error("Failed to store avatar", err);
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: "Failed to store avatar", detail: message }, { status: 500 });
   }
 }
 

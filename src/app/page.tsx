@@ -172,18 +172,19 @@ export default function Home() {
   }
 
   async function handleFetchAvatar(channelId: string, url: string) {
-    if (!requireAuth()) return;
+    if (!requireAuth()) throw new Error("Sign in required");
     const res = await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}&url=${encodeURIComponent(url)}`, {
       headers: { Authorization: `Bearer ${user!.refresh_token}` },
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       alert(body.error ?? "Failed to fetch avatar");
+      throw new Error(body.error ?? "Failed to fetch avatar");
     }
   }
 
   async function handleClearAvatar(channelId: string) {
-    if (!requireAuth()) return;
+    if (!requireAuth()) throw new Error("Sign in required");
     await fetch(`/api/avatar?channelId=${encodeURIComponent(channelId)}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${user!.refresh_token}` },
